@@ -1,0 +1,12 @@
+node_modules/
+.env
+data/
+bench/results/
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+dist/
+coverage/
+*.log
+.DS_Store
+contracts/lib/

@@ -1,0 +1,13 @@
+{
+  "name": "@recourse/demo-agent",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@recourse/shared": "workspace:*",
+    "@recourse/chain": "workspace:*"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@recourse/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@recourse/shared": "workspace:*",
+    "@recourse/chain": "workspace:*",
+    "@recourse/rules-engine": "workspace:*",
+    "@recourse/llm": "workspace:*",
+    "@recourse/mandate": "workspace:*",
+    "@recourse/adjudicator": "workspace:*"
+  }
+}

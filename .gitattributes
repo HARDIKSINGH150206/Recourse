@@ -1,0 +1,3 @@
+* text=auto eol=lf
+pnpm-lock.yaml -diff linguist-generated
+packages/shared/test/vectors.json linguist-generated

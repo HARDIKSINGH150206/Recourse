@@ -20,7 +20,7 @@ git clone <repo-url> recourse && cd recourse
 corepack enable
 pnpm install
 cp .env.example .env              # then fill in the values (section 4)
-cd contracts && forge install OpenZeppelin/openzeppelin-contracts foundry-rs/forge-std && cd ..
+pnpm contracts:install            # pinned OpenZeppelin + forge-std into contracts/lib (gitignored)
 ollama pull <extractor-model>      # chosen in Day-0 spike S3; pin names in config/models.json
 ollama pull <judge-model>
 ```
@@ -119,11 +119,13 @@ VITE_DEMO_KEY_MODE=0                # 1 uses a burner owner key (stage fallback 
 |---|---|
 | `pnpm dev` | runs gateway, api, demo-merchant, demo-agent and dashboard in parallel |
 | `pnpm chain:up` | starts anvil |
+| `pnpm env:local` | creates `.env` for the local chain with anvil dev keys (refuses to overwrite) |
 | `pnpm chain:deploy` | deploys contracts to the chain in `.env` and syncs addresses |
 | `pnpm sync:deployment` | writes `deployments/<chainId>.json` and updates `.env` |
 | `pnpm seed` | funds accounts, sets roles, approves escrow |
 | `pnpm demo` / `pnpm demo:reset` | golden path run / clean state |
 | `pnpm test` | Vitest across packages and apps |
+| `pnpm contracts:install` | installs pinned OpenZeppelin and forge-std into `contracts/lib` |
 | `pnpm test:contracts` | `forge test -vvv` inside `contracts/` |
 | `pnpm typecheck` | `tsc --noEmit` per package |
 | `pnpm lint` | ESLint, Prettier check, solhint |

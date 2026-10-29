@@ -1,0 +1,8 @@
+node_modules
+contracts/lib
+contracts/out
+contracts/cache
+docs
+*.md
+pnpm-lock.yaml
+packages/shared/test/vectors.json

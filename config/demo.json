@@ -1,0 +1,6 @@
+{
+  "merchants": { "weather": "http://localhost:4200" },
+  "pricePerCall": "0.01",
+  "disputeWindowSeconds": 30,
+  "scenarios": []
+}
