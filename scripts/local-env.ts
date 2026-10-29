@@ -26,5 +26,8 @@ const updates: Record<string, string> = {
 };
 updates.ARBITER_ADDRESS = privateKeyToAccount(ANVIL_KEYS.ARBITER_PRIVATE_KEY).address;
 updates.GATEWAY_ADDRESS = privateKeyToAccount(ANVIL_KEYS.GATEWAY_PRIVATE_KEY).address;
+// prefill for the dashboard mandate form (public addresses, no keys)
+updates.VITE_AGENT_ADDRESS = privateKeyToAccount(ANVIL_KEYS.AGENT_PRIVATE_KEY).address;
+updates.VITE_MERCHANT_ADDRESS = privateKeyToAccount(ANVIL_KEYS.MERCHANT_PRIVATE_KEY).address;
 writeFileSync(envPath, upsertEnv(readFileSync(join(root, ".env.example"), "utf8"), updates));
 console.log("wrote .env with anvil development keys (local use only)");
