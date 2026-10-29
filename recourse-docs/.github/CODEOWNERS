@@ -1,0 +1,23 @@
+# Replace @p1 @p2 @p3 with the real GitHub handles (GUIDE.md section 2)
+/contracts/                  @p1
+/packages/chain/             @p1
+/packages/shared/            @p1
+/packages/merchant-sdk/      @p1
+/apps/gateway/               @p1
+/apps/api/                   @p1
+/packages/shared/src/schemas/verdict.ts @p2
+/packages/shared/src/schemas/rules.ts   @p2
+/packages/shared/src/schemas/facts.ts   @p2
+/packages/rules-engine/      @p2
+/packages/llm/               @p2
+/packages/adjudicator/       @p2
+/packages/mandate/           @p2
+/bench/                      @p2
+/apps/dashboard/             @p3
+/apps/demo-agent/            @p3
+/apps/demo-merchant/         @p3
+/scripts/                    @p3
+/.github/                    @p3
+/docs/                       @p1 @p2 @p3
+/GUIDE.md                    @p1 @p2 @p3
+/PRD.md                      @p1 @p2 @p3
