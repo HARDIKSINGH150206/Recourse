@@ -459,6 +459,21 @@ describe("tamper test (dev route)", () => {
     ).toBe(404);
   });
 
+  it("lets only the configured dashboard origin read the log from a browser", async () => {
+    const h = await makeHarness({ corsOrigins: ["http://localhost:5173"] });
+    const ok = await h.app.inject({ url: "/health", headers: { origin: "http://localhost:5173" } });
+    expect(ok.headers["access-control-allow-origin"]).toBe("http://localhost:5173");
+    const other = await h.app.inject({ url: "/health", headers: { origin: "http://evil.test" } });
+    expect(other.headers["access-control-allow-origin"]).toBeUndefined();
+    const none = await (
+      await makeHarness()
+    ).app.inject({
+      url: "/health",
+      headers: { origin: "http://localhost:5173" },
+    });
+    expect(none.headers["access-control-allow-origin"]).toBeUndefined();
+  });
+
   it("rewriting a stored entry is detected by bundle verification", async () => {
     const h = await makeHarness({ devRoutes: true });
     const { requestId } = await payAndFetch(h);

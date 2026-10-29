@@ -77,6 +77,7 @@ export async function makeHarness(
     maxEntries?: number;
     merchants?: Record<string, string>;
     realFetch?: boolean;
+    corsOrigins?: string[];
   } = {},
 ): Promise<Harness> {
   const clock = new ManualClock(T0);
@@ -201,6 +202,7 @@ export async function makeHarness(
     upstreamTimeoutMs: 1000,
     maxResponseBytes: 5_000_000,
     devRoutes: opts.devRoutes ?? false,
+    corsOrigins: opts.corsOrigins,
   };
 
   return {
