@@ -5,3 +5,4 @@ export * from "./api.js";
 export * from "./rules.js";
 export * from "./facts.js";
 export * from "./verdict.js";
+export * from "./weather.js";

@@ -6,6 +6,7 @@ import { UnavailableCompiler } from "../src/services/stubs.js";
 import {
   CHAIN_ID,
   ESCROW,
+  MANDATE_ID,
   T0,
   TOKEN,
   accounts,
@@ -261,6 +262,21 @@ describe("POST /mandates (signed)", () => {
       404,
     );
     expect((await w.app.inject({ url: "/mandates/nothex" })).statusCode).toBe(400);
+  });
+});
+
+describe("GET /mandates?owner=", () => {
+  it("lists an owner's stored mandates newest first", async () => {
+    const w = await makeWorld();
+    await w.storeMandate();
+    const r = w.json(await w.app.inject({ url: `/mandates?owner=${accounts.owner.address}` }));
+    expect(r.mandates).toHaveLength(1);
+    expect(r.mandates[0]).toMatchObject({ mandate_id: MANDATE_ID, registered_onchain: false });
+    expect(
+      w.json(await w.app.inject({ url: `/mandates?owner=${accounts.agent.address}` })).mandates,
+    ).toEqual([]);
+    expect((await w.app.inject({ url: "/mandates" })).statusCode).toBe(400);
+    expect((await w.app.inject({ url: "/mandates?owner=nope" })).statusCode).toBe(400);
   });
 });
 

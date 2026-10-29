@@ -4,11 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "dev": "tsx watch src/index.ts",
+    "start": "tsx src/index.ts",
+    "test": "vitest run"
   },
   "dependencies": {
-    "@recourse/shared": "workspace:*",
     "@recourse/chain": "workspace:*",
-    "@recourse/merchant-sdk": "workspace:*"
+    "@recourse/merchant-sdk": "workspace:*",
+    "@recourse/shared": "workspace:*",
+    "express": "^5",
+    "pino": "^9",
+    "viem": "^2.21.54",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "vitest": "^2.1.8"
   }
 }
