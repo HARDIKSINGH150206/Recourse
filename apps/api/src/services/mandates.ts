@@ -252,6 +252,10 @@ export class MandateService {
     return { mandate_id: mandateId, created };
   }
 
+  listByOwner(owner: string, limit?: number): MandateRecord[] {
+    return this.d.repo.listByOwner(owner, limit);
+  }
+
   /** Stored mandate plus its on-chain registration status (cached once true). */
   async get(mandateId: string): Promise<(MandateRecord & { registeredOnchain: boolean }) | null> {
     const rec = this.d.repo.get(mandateId);

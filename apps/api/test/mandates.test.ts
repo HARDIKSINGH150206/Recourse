@@ -6,6 +6,7 @@ import { UnavailableCompiler } from "../src/services/stubs.js";
 import {
   CHAIN_ID,
   ESCROW,
+  MANDATE_ID,
   T0,
   TOKEN,
   accounts,
@@ -264,6 +265,21 @@ describe("POST /mandates (signed)", () => {
   });
 });
 
+describe("GET /mandates?owner=", () => {
+  it("lists an owner's stored mandates newest first", async () => {
+    const w = await makeWorld();
+    await w.storeMandate();
+    const r = w.json(await w.app.inject({ url: `/mandates?owner=${accounts.owner.address}` }));
+    expect(r.mandates).toHaveLength(1);
+    expect(r.mandates[0]).toMatchObject({ mandate_id: MANDATE_ID, registered_onchain: false });
+    expect(
+      w.json(await w.app.inject({ url: `/mandates?owner=${accounts.agent.address}` })).mandates,
+    ).toEqual([]);
+    expect((await w.app.inject({ url: "/mandates" })).statusCode).toBe(400);
+    expect((await w.app.inject({ url: "/mandates?owner=nope" })).statusCode).toBe(400);
+  });
+});
+
 describe("summary template", () => {
   it("is deterministic plain English from validated values", () => {
     const s = renderSummary({
@@ -281,5 +297,24 @@ describe("summary template", () => {
     expect(s).toBe(
       "Your agent may spend up to 0.05 USDC per call and 2 USDC in total on weather data API calls until 2026-01-01 16:53 UTC. Allowed merchants: 0xabc. Any other field is not restricted: vendor_choice. Responses must be valid and fresher than 1 hour and arrive within 5000 ms. Substituting a different product is not allowed.",
     );
+  });
+});
+
+describe("empty and malformed JSON bodies", () => {
+  it("an action POST with a JSON content type and no body reaches the handler (here: 403 admin gate), bad JSON is a 400", async () => {
+    const w = await makeWorld({ adminToken: null });
+    const empty = await w.app.inject({
+      method: "POST",
+      url: "/disputes/x/adjudicate",
+      headers: { "content-type": "application/json" },
+    });
+    expect(empty.statusCode).toBe(403); // not a 400 body error
+    const bad = await w.app.inject({
+      method: "POST",
+      url: "/mandates",
+      headers: { "content-type": "application/json" },
+      payload: "{not json",
+    });
+    expect(bad.statusCode).toBe(400);
   });
 });

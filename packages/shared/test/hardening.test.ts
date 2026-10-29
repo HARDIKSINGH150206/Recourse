@@ -123,3 +123,40 @@ describe("verifyBundle structural checks", () => {
     expect((await verifyBundle(b)).time_ok).toBe(false);
   });
 });
+
+describe("WeatherResponseSchema", () => {
+  const ok = {
+    city: "Mumbai",
+    temp_c: 31,
+    humidity: 68,
+    observed_at: 1_767_200_000,
+    summary: "Humid",
+  };
+  it("accepts a healthy body and rejects wrong types and out-of-range values", async () => {
+    const { WeatherResponseSchema } = await import("../src/index.js");
+    expect(WeatherResponseSchema.safeParse(ok).success).toBe(true);
+    for (const bad of [
+      { temp: "hot" },
+      {},
+      { ...ok, temp_c: 61 },
+      { ...ok, temp_c: "31" },
+      { ...ok, humidity: 101 },
+      { ...ok, humidity: -1 },
+      { ...ok, observed_at: 1.5 },
+      { ...ok, city: "" },
+    ]) {
+      expect(WeatherResponseSchema.safeParse(bad).success, JSON.stringify(bad)).toBe(false);
+    }
+  });
+});
+
+describe("parseLenientJson", () => {
+  it("treats an empty body as {} and rejects malformed JSON", async () => {
+    const { parseLenientJson } = await import("../src/index.js");
+    expect(parseLenientJson("")).toEqual({});
+    expect(parseLenientJson("  \n")).toEqual({});
+    expect(parseLenientJson(Buffer.alloc(0))).toEqual({});
+    expect(parseLenientJson('{"a":1}')).toEqual({ a: 1 });
+    expect(() => parseLenientJson("{bad")).toThrow(/not valid JSON/);
+  });
+});

@@ -31,9 +31,10 @@ export function buildRequirements(i: RequirementsInput): PaymentRequirements {
   return {
     scheme: "recourse-escrow",
     chain_id: i.chainId,
-    escrow: i.escrow,
-    token: i.token,
-    merchant: i.merchant,
+    // JSON convention (docs/03 section 1): addresses are lowercase on the wire
+    escrow: i.escrow.toLowerCase() as Address,
+    token: i.token.toLowerCase() as Address,
+    merchant: i.merchant.toLowerCase() as Address,
     amount: i.price,
     request_id: i.requestId,
     expires_at: i.now + i.ttlSeconds,

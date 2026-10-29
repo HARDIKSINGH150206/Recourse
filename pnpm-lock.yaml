@@ -96,12 +96,43 @@ importers:
 
   apps/demo-agent:
     dependencies:
+      '@fastify/cors':
+        specifier: ^11.3.1
+        version: 11.3.1
+      '@fastify/rate-limit':
+        specifier: ^11.2.1
+        version: 11.2.1
       '@recourse/chain':
         specifier: workspace:*
         version: link:../../packages/chain
+      '@recourse/merchant-sdk':
+        specifier: workspace:*
+        version: link:../../packages/merchant-sdk
       '@recourse/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      fastify:
+        specifier: ^5
+        version: 5.12.7
+      pino:
+        specifier: ^9
+        version: 9.14.0
+      viem:
+        specifier: ^2.21.54
+        version: 2.57.13(typescript@5.9.3)(zod@3.25.76)
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      express:
+        specifier: ^5
+        version: 5.3.0
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.5)
 
   apps/demo-merchant:
     dependencies:
@@ -114,6 +145,25 @@ importers:
       '@recourse/shared':
         specifier: workspace:*
         version: link:../../packages/shared
+      express:
+        specifier: ^5
+        version: 5.3.0
+      pino:
+        specifier: ^9
+        version: 9.14.0
+      viem:
+        specifier: ^2.21.54
+        version: 2.57.13(typescript@5.9.3)(zod@3.25.76)
+      zod:
+        specifier: ^3.24.1
+        version: 3.25.76
+    devDependencies:
+      '@types/express':
+        specifier: ^5.0.6
+        version: 5.0.6
+      vitest:
+        specifier: ^2.1.8
+        version: 2.1.9(@types/node@22.20.5)
 
   apps/gateway:
     dependencies:

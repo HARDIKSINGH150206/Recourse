@@ -80,6 +80,26 @@ export function registerRoutes(app: FastifyInstance, deps: ApiDeps): void {
     return reply.code(r.created ? 201 : 200).send({ mandate_id: r.mandate_id });
   });
 
+  /** Mandates stored for an owner, newest first (registration flag as last observed; GET one to refresh). */
+  app.get("/mandates", async (req) => {
+    const q = z
+      .object({ owner: AddressLc, limit: z.coerce.number().int().min(1).max(100).optional() })
+      .strict()
+      .parse({
+        ...(req.query as object),
+        owner: String((req.query as { owner?: string }).owner ?? "").toLowerCase(),
+      });
+    return {
+      mandates: deps.mandates.listByOwner(q.owner, q.limit).map((m) => ({
+        mandate_id: m.mandateId,
+        mandate: m.mandate,
+        merchants: m.merchants,
+        registered_onchain: m.registeredOnchain,
+        created_at: m.createdAt,
+      })),
+    };
+  });
+
   app.get("/mandates/:mandateId", async (req) => {
     const id = Hex32.safeParse((req.params as { mandateId: string }).mandateId.toLowerCase());
     if (!id.success) throw new RecourseError("bad_request", "invalid mandate id");

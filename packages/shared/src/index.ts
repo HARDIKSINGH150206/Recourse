@@ -5,6 +5,7 @@ export * from "./commit.js";
 export * from "./bundle.js";
 export * from "./adjudication.js";
 export * from "./errors.js";
+export * from "./http.js";
 export * from "./ids.js";
 export * from "./clock.js";
 export * from "./logger.js";

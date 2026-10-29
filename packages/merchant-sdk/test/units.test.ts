@@ -45,6 +45,28 @@ describe("buildRequirements", () => {
   });
 });
 
+describe("buildRequirements addresses", () => {
+  it("are lowercased even when the operator configured checksummed ones", () => {
+    const mixed = "0xE7f1725E7734CE288F8367e1Bb143E90bb3F0512";
+    const r = buildRequirements({
+      chainId: CHAIN_ID,
+      escrow: mixed,
+      token: mixed,
+      merchant: merchant.address,
+      price: "0.01",
+      requestId: rid("a"),
+      now: 1,
+      ttlSeconds: 1,
+      resource: "/",
+    });
+    expect([r.escrow, r.token, r.merchant]).toEqual([
+      mixed.toLowerCase(),
+      mixed.toLowerCase(),
+      merchant.address.toLowerCase(),
+    ]);
+  });
+});
+
 describe("MemoryServedStore", () => {
   it("claims once, frees after expiry, and stays bounded", () => {
     const s = new MemoryServedStore(3);

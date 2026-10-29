@@ -2,12 +2,21 @@ import cors from "@fastify/cors";
 import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from "fastify";
 import { ZodError } from "zod";
-import { RecourseError } from "@recourse/shared";
+import { RecourseError, parseLenientJson } from "@recourse/shared";
 import type { ApiDeps } from "./deps.js";
 import { registerRoutes } from "./routes/index.js";
 
 export async function buildServer(deps: ApiDeps): Promise<FastifyInstance> {
   const app = Fastify({ loggerInstance: deps.logger as FastifyBaseLogger, bodyLimit: 64 * 1024 });
+
+  // an empty JSON body is {} (action routes); malformed JSON is a 400
+  app.addContentTypeParser("application/json", { parseAs: "string" }, (_req, body, done) => {
+    try {
+      done(null, parseLenientJson(body));
+    } catch (e) {
+      done(e as Error);
+    }
+  });
 
   await app.register(cors, {
     origin: deps.corsOrigins,
