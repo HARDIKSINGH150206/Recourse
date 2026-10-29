@@ -3,6 +3,7 @@ import { entryHash } from "./hash.js";
 import { verifyDisclosure } from "./commit.js";
 import { recoverReceiptSigner, recoverTreeHeadSigner } from "./eip712.js";
 import { verifyBatchProof } from "./merkle.js";
+import { EvidenceBundleSchema } from "./schemas/evidence.js";
 import type { EvidenceBundle, LogEntry, VerificationReport } from "./types.js";
 
 export interface VerifyOptions {
@@ -53,11 +54,43 @@ export async function verifyBundle(
     }
   }
 
-  // 2. disclosed fields
+  if (bundle.entries.length === 0) {
+    entry_hash_ok = false;
+    errors.push("bundle has no entries");
+  }
+  // The bundle is for one request: entries may not belong to another request or mandate.
+  // (Reported under entry_hash_ok because the report keys are fixed by docs/03 section 9.)
+  const seenSeq = new Set<number>();
+  let duplicateSeq = false;
+  for (const { entry } of bundle.entries) {
+    if (entry.request_id !== null && entry.request_id !== bundle.request_id) {
+      entry_hash_ok = false;
+      errors.push(`seq ${entry.seq} belongs to a different request`);
+    }
+    if (entry.mandate_id !== null && entry.mandate_id !== bundle.mandate_id) {
+      entry_hash_ok = false;
+      errors.push(`seq ${entry.seq} belongs to a different mandate`);
+    }
+    if (seenSeq.has(entry.seq)) {
+      duplicateSeq = true;
+      errors.push(`duplicate seq ${entry.seq}`);
+    }
+    seenSeq.add(entry.seq);
+  }
+
+  // 2. disclosed fields (a malformed value, for example a float, is a failure, never a crash)
   let fields_ok = true;
   for (const { entry, disclosed } of bundle.entries) {
+    const names = new Set<string>();
     for (const d of disclosed) {
-      if (!verifyDisclosure(entry.payload_commitment as Hex, d)) {
+      let ok = false;
+      try {
+        ok = !names.has(d.name) && verifyDisclosure(entry.payload_commitment as Hex, d);
+      } catch {
+        ok = false;
+      }
+      names.add(d.name);
+      if (!ok) {
         fields_ok = false;
         errors.push(`field proof failed: seq ${entry.seq} field ${d.name}`);
       }
@@ -65,7 +98,7 @@ export async function verifyBundle(
   }
 
   // 3. batch membership
-  let membership_ok = true;
+  let membership_ok = !duplicateSeq;
   for (const { entry, batch_proof } of bundle.entries) {
     const head = bundle.tree_heads.find((h) => h.batch_index === batch_proof.batch_index);
     if (!head) {
@@ -86,7 +119,13 @@ export async function verifyBundle(
 
   // 4. tree head signatures
   let tree_head_signature_ok = true;
+  const batchIndexes = new Set<number>();
   for (const head of bundle.tree_heads) {
+    if (batchIndexes.has(head.batch_index)) {
+      tree_head_signature_ok = false;
+      errors.push(`duplicate tree head for batch ${head.batch_index}`);
+    }
+    batchIndexes.add(head.batch_index);
     try {
       const signer = await recoverTreeHeadSigner(chainId, head);
       if (signer.toLowerCase() !== gateway.toLowerCase()) {
@@ -104,12 +143,21 @@ export async function verifyBundle(
   if (opts.rpc) {
     anchor_ok = true;
     for (const head of bundle.tree_heads) {
-      const at = await opts.rpc.readContract({
-        address: escrow as Address,
-        abi: ANCHORED_AT_ABI,
-        functionName: "anchoredAt",
-        args: [head.root as Hex],
-      });
+      let at: bigint;
+      try {
+        at = BigInt(
+          await opts.rpc.readContract({
+            address: escrow as Address,
+            abi: ANCHORED_AT_ABI,
+            functionName: "anchoredAt",
+            args: [head.root as Hex],
+          }),
+        );
+      } catch {
+        anchor_ok = false;
+        errors.push(`anchor lookup failed for root ${head.root}`);
+        continue;
+      }
       const claimed = bundle.anchors.find((a) => a.root === head.root);
       if (at === 0n || !claimed || BigInt(claimed.block_timestamp) !== at) {
         anchor_ok = false;
@@ -203,4 +251,38 @@ export async function verifyBundle(
     time_ok,
     errors,
   };
+}
+
+const EMPTY_REPORT: VerificationReport = {
+  entry_hash_ok: false,
+  fields_ok: false,
+  membership_ok: false,
+  tree_head_signature_ok: false,
+  anchor_ok: null,
+  receipt_ok: null,
+  chain_ok: null,
+  time_ok: false,
+  errors: [],
+};
+
+/**
+ * Verify untrusted input: parses with the bundle schema first, and never throws.
+ * Anything that is not a well-formed bundle yields an all-false report with the parse errors.
+ */
+export async function verifyUntrustedBundle(
+  input: unknown,
+  opts: VerifyOptions = {},
+): Promise<VerificationReport> {
+  const parsed = EvidenceBundleSchema.safeParse(input);
+  if (!parsed.success) {
+    const errors = parsed.error.issues
+      .slice(0, 20)
+      .map((i) => `schema: ${i.path.join(".")}: ${i.message}`);
+    return { ...EMPTY_REPORT, errors };
+  }
+  try {
+    return await verifyBundle(parsed.data, opts);
+  } catch (e) {
+    return { ...EMPTY_REPORT, errors: [`verification crashed: ${(e as Error).message}`] };
+  }
 }

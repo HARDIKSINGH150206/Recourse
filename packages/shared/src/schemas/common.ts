@@ -7,3 +7,5 @@ export const HexBytes = z.string().regex(/^0x([0-9a-f]{2})*$/, "expected lowerca
 export const UintString = z.string().regex(/^(0|[1-9][0-9]*)$/, "expected decimal integer string");
 /** Unix seconds. */
 export const UnixSeconds = z.number().int().nonnegative();
+/** 65-byte secp256k1 signature (r, s, v) as lowercase hex. */
+export const Signature65 = z.string().regex(/^0x[0-9a-f]{130}$/, "expected 65-byte signature");

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { AddressLc, Hex32, HexBytes, UnixSeconds } from "./common.js";
+import { AddressLc, Hex32, Signature65, UnixSeconds } from "./common.js";
+
+// Upper bounds protect verifiers (including the browser) from oversized untrusted input.
+export const MAX_BUNDLE_ENTRIES = 1000;
+export const MAX_PROOF_LEN = 64;
+export const MAX_DISCLOSED_PER_ENTRY = 64;
+export const MAX_TREE_HEADS = 256;
 
 export const EntryTypeSchema = z.enum([
   "request",
@@ -27,11 +33,11 @@ export const LogEntrySchema = z
 
 export const DisclosedFieldSchema = z
   .object({
-    name: z.string().min(1),
+    name: z.string().min(1).max(64),
     // JSON value; hashed via JCS so it must not contain floats.
     value: z.unknown(),
     salt: Hex32,
-    proof: z.array(Hex32),
+    proof: z.array(Hex32).max(MAX_PROOF_LEN),
   })
   .strict();
 
@@ -41,7 +47,7 @@ export const TreeHeadSchema = z
     size: z.number().int().nonnegative(),
     batch_index: z.number().int().nonnegative(),
     timestamp: UnixSeconds,
-    signature: HexBytes,
+    signature: Signature65,
   })
   .strict();
 
@@ -51,7 +57,7 @@ export const ReceiptSchema = z
     responseHash: Hex32,
     timestamp: UnixSeconds,
     merchant: AddressLc,
-    signature: HexBytes,
+    signature: Signature65,
   })
   .strict();
 
@@ -67,9 +73,12 @@ export const AnchorSchema = z
 export const BundleEntrySchema = z
   .object({
     entry: LogEntrySchema,
-    disclosed: z.array(DisclosedFieldSchema),
+    disclosed: z.array(DisclosedFieldSchema).max(MAX_DISCLOSED_PER_ENTRY),
     batch_proof: z
-      .object({ batch_index: z.number().int().nonnegative(), proof: z.array(Hex32) })
+      .object({
+        batch_index: z.number().int().nonnegative(),
+        proof: z.array(Hex32).max(MAX_PROOF_LEN),
+      })
       .strict(),
   })
   .strict();
@@ -89,9 +98,9 @@ export const EvidenceBundleSchema = z
     request_id: Hex32,
     mandate_id: Hex32,
     escrow_id: Hex32,
-    entries: z.array(BundleEntrySchema),
-    tree_heads: z.array(TreeHeadSchema),
-    anchors: z.array(AnchorSchema),
+    entries: z.array(BundleEntrySchema).max(MAX_BUNDLE_ENTRIES),
+    tree_heads: z.array(TreeHeadSchema).max(MAX_TREE_HEADS),
+    anchors: z.array(AnchorSchema).max(MAX_TREE_HEADS),
     receipt: ReceiptSchema.nullable(),
   })
   .strict();
@@ -106,6 +115,6 @@ export const VerificationReportSchema = z
     receipt_ok: z.boolean().nullable(),
     chain_ok: z.boolean().nullable(),
     time_ok: z.boolean(),
-    errors: z.array(z.string()),
+    errors: z.array(z.string()).max(1000),
   })
   .strict();
