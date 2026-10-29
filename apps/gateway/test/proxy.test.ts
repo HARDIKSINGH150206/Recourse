@@ -489,3 +489,25 @@ describe("tamper test (dev route)", () => {
     expect(h.lines.join("")).toContain("DEV tamper applied");
   });
 });
+
+describe("empty JSON bodies", () => {
+  it("POST /log/flush works with a JSON content type and no body", async () => {
+    const h = await makeHarness();
+    const r = await h.app.inject({
+      method: "POST",
+      url: "/log/flush",
+      headers: { "content-type": "application/json" },
+    });
+    expect(r.statusCode).toBe(200);
+    expect(
+      (
+        await h.app.inject({
+          method: "POST",
+          url: "/log/decision",
+          headers: { "content-type": "application/json" },
+          payload: "{bad",
+        })
+      ).statusCode,
+    ).toBe(400);
+  });
+});

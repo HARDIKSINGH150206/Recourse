@@ -149,3 +149,14 @@ describe("WeatherResponseSchema", () => {
     }
   });
 });
+
+describe("parseLenientJson", () => {
+  it("treats an empty body as {} and rejects malformed JSON", async () => {
+    const { parseLenientJson } = await import("../src/index.js");
+    expect(parseLenientJson("")).toEqual({});
+    expect(parseLenientJson("  \n")).toEqual({});
+    expect(parseLenientJson(Buffer.alloc(0))).toEqual({});
+    expect(parseLenientJson('{"a":1}')).toEqual({ a: 1 });
+    expect(() => parseLenientJson("{bad")).toThrow(/not valid JSON/);
+  });
+});

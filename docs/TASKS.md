@@ -55,11 +55,11 @@ Rules for two people:
 | ID | Task | Req / spec | Status | Branch | Notes / handoff |
 |---|---|---|---|---|---|
 | P3-01 | Spike S4 scaffold, CI, CODEOWNERS, PR template | docs/07 s2, docs/10 s3 | IN_REVIEW | dev | Scaffold, CI workflow, shared package done; CODEOWNERS handles still placeholders |
-| P3-02 | Demo merchant with failure modes | docs/04 s4 | TODO | | |
+| P3-02 | Demo merchant with failure modes | docs/04 s4 | DONE | p3/feat-demo-merchant-agent | All 11 modes; X-Demo-Mode per request |
 | P3-03 | Dashboard shell, wallet, API client, MSW mocks | docs/06 | TODO | | |
 | P3-04 | Mandate and Run pages | M1, M2, D1 | TODO | | |
 | P3-05 | Verdict, Bench and Reputation pages | D1, D3 | TODO | | |
 | P3-06 | Verify page with tamper test | G4, D2 | TODO | | |
-| P3-07 | Demo agent and `pnpm demo` script | docs/05, docs/06 | TODO | | |
+| P3-07 | Demo agent and `pnpm demo` script | docs/05, docs/06 | DONE | p3/feat-demo-merchant-agent | `pnpm demo` verified live: all 9 scenes PASS with a real adjudicator; scenes 2 to 5 and 7 report PENDING until P2 lands |
 | P3-08 | Validation sprint log and interview notes (outside repo if personal data) | docs/07 s7 | TODO | | |
 | P3-09 | Pitch deck and rehearsal answers | docs/05 s8 | TODO | | |

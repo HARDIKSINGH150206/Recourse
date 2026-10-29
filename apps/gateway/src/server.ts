@@ -1,6 +1,6 @@
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from "fastify";
 import { ZodError } from "zod";
-import { RecourseError } from "@recourse/shared";
+import { RecourseError, parseLenientJson } from "@recourse/shared";
 import type { GatewayDeps } from "./deps.js";
 import { registerProxy } from "./proxy.js";
 import { registerLogRoutes } from "./routes/log.js";
@@ -32,7 +32,17 @@ export function buildServer(deps: GatewayDeps): FastifyInstance {
 
   // The proxy replaces content-type parsers (raw bytes), so it lives in its own scope.
   app.register(async (scope) => registerProxy(scope, deps));
-  app.register(async (scope) => registerLogRoutes(scope, deps));
+  app.register(async (scope) => {
+    // an empty JSON body is {} (e.g. POST /log/flush); malformed JSON is a 400
+    scope.addContentTypeParser("application/json", { parseAs: "string" }, (_req, body, done) => {
+      try {
+        done(null, parseLenientJson(body));
+      } catch (e) {
+        done(e as Error);
+      }
+    });
+    registerLogRoutes(scope, deps);
+  });
   if (deps.devRoutes) app.register(async (scope) => registerDevRoutes(scope, deps));
   return app as unknown as FastifyInstance;
 }

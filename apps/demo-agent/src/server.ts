@@ -3,7 +3,7 @@ import rateLimit from "@fastify/rate-limit";
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from "fastify";
 import type { Logger } from "pino";
 import { z, ZodError } from "zod";
-import { Hex32, RecourseError } from "@recourse/shared";
+import { Hex32, RecourseError, parseLenientJson } from "@recourse/shared";
 import type { Hex } from "viem";
 import type { DemoAgent } from "./service.js";
 
@@ -20,6 +20,15 @@ export async function buildServer(
   corsOrigins: string[],
 ): Promise<FastifyInstance> {
   const app = Fastify({ loggerInstance: logger as FastifyBaseLogger, bodyLimit: 16 * 1024 });
+  // an empty JSON body is {} (action routes); malformed JSON is a 400
+  app.addContentTypeParser("application/json", { parseAs: "string" }, (_req, body, done) => {
+    try {
+      done(null, parseLenientJson(body));
+    } catch (e) {
+      done(e as Error);
+    }
+  });
+
   await app.register(cors, { origin: corsOrigins, methods: ["GET", "POST", "OPTIONS"] });
   await app.register(rateLimit, { max: 120, timeWindow: "1 minute" });
 

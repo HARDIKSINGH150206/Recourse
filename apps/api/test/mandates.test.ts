@@ -299,3 +299,22 @@ describe("summary template", () => {
     );
   });
 });
+
+describe("empty and malformed JSON bodies", () => {
+  it("an action POST with a JSON content type and no body reaches the handler (here: 403 admin gate), bad JSON is a 400", async () => {
+    const w = await makeWorld({ adminToken: null });
+    const empty = await w.app.inject({
+      method: "POST",
+      url: "/disputes/x/adjudicate",
+      headers: { "content-type": "application/json" },
+    });
+    expect(empty.statusCode).toBe(403); // not a 400 body error
+    const bad = await w.app.inject({
+      method: "POST",
+      url: "/mandates",
+      headers: { "content-type": "application/json" },
+      payload: "{not json",
+    });
+    expect(bad.statusCode).toBe(400);
+  });
+});
