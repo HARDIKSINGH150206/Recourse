@@ -1,6 +1,14 @@
 {
   "merchants": { "weather": "http://localhost:4200" },
+  "merchantId": "weather",
+  "city": "Mumbai",
+  "category": "weather_data_api",
   "pricePerCall": "0.01",
-  "disputeWindowSeconds": 30,
-  "scenarios": []
+  "maxPricePerCall": "0.05",
+  "overCapAmount": "0.50",
+  "totalBudget": "2.00",
+  "mandateTtlSeconds": 86400,
+  "freshnessSeconds": 3600,
+  "slaMs": 5000,
+  "disputeWindowSeconds": 30
 }
