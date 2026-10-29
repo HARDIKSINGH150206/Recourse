@@ -192,3 +192,42 @@ tr.edited input {
 details > summary {
   cursor: pointer;
 }
+.skip {
+  position: absolute;
+  left: -999px;
+}
+.skip:focus {
+  left: 0.5rem;
+  top: 0.5rem;
+  background: var(--bg);
+  padding: 0.5rem;
+  z-index: 10;
+}
+.top {
+  flex-wrap: wrap;
+}
+.top nav {
+  flex-wrap: wrap;
+}
+main,
+footer {
+  overflow-wrap: anywhere;
+}
+main {
+  overflow-x: auto;
+}
+@media (max-width: 40rem) {
+  main {
+    padding: 0.75rem 1rem;
+  }
+  .toast {
+    left: 1rem;
+    right: 1rem;
+    max-width: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}

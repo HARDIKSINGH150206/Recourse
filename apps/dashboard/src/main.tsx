@@ -10,6 +10,7 @@ import { TimelinePage } from "./pages/Timeline";
 import { DisputesPage } from "./pages/Disputes";
 import { DisputeDetailPage } from "./pages/DisputeDetail";
 import { VerifyPage } from "./pages/Verify";
+import { ReputationPage } from "./pages/Reputation";
 import "./styles.css";
 
 const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -29,6 +30,7 @@ createRoot(document.getElementById("root")!).render(
               <Route path="/disputes/:id" element={<DisputeDetailPage />} />
               <Route path="/verify" element={<VerifyPage />} />
               <Route path="/verify/:requestId" element={<VerifyPage />} />
+              <Route path="/reputation" element={<ReputationPage />} />
               <Route path="*" element={<p>Page not found.</p>} />
             </Route>
           </Routes>

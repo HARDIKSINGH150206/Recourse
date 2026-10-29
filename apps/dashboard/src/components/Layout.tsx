@@ -1,4 +1,5 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { useEffect } from "react";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { config } from "../lib/config";
 import { Hash } from "./Copy";
 
@@ -7,11 +8,21 @@ const links = [
   ["/run", "Run"],
   ["/disputes", "Disputes"],
   ["/verify", "Verify"],
+  ["/reputation", "Reputation"],
 ] as const;
 
 export function Layout() {
+  const { pathname } = useLocation();
+  // one title per page so screen readers and tabs announce where you are
+  useEffect(() => {
+    const page = links.find(([to]) => pathname.startsWith(to))?.[1];
+    document.title = page ? `${page} · Recourse` : "Recourse";
+  }, [pathname]);
   return (
     <>
+      <a href="#main" className="skip">
+        Skip to content
+      </a>
       <header className="top">
         <strong>Recourse</strong>
         <span className="badge">testnet</span>
@@ -23,7 +34,7 @@ export function Layout() {
           ))}
         </nav>
       </header>
-      <main>
+      <main id="main">
         <Outlet />
       </main>
       <footer>

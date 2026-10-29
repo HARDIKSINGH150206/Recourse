@@ -58,7 +58,7 @@ Rules for two people:
 | P3-02 | Demo merchant with failure modes | docs/04 s4 | DONE | p3/feat-demo-merchant-agent | All 11 modes; X-Demo-Mode per request |
 | P3-03 | Dashboard shell, wallet, API client, MSW mocks | docs/06 | IN REVIEW | Hardik | Vite+React+Query+viem (no wagmi, no MSW: runs against the real services) |
 | P3-04 | Mandate and Run pages | M1, M2, D1 | IN REVIEW | Hardik | Compile returns 501 until P2 lands the compiler |
-| P3-05 | Verdict, Bench and Reputation pages | D1, D3 | IN PROGRESS | Hardik | Verdict, Disputes, Timeline done; Bench and Reputation pending |
+| P3-05 | Verdict, Bench and Reputation pages | D1, D3 | IN REVIEW | Hardik | Bench page waits for the benchmark results from P2 |
 | P3-06 | Verify page with tamper test | G4, D2 | IN REVIEW | Hardik | Request-id load, paste/upload, editable fields, on-chain anchor check; full-batch mode not built |
 | P3-07 | Demo agent and `pnpm demo` script | docs/05, docs/06 | DONE | p3/feat-demo-merchant-agent | `pnpm demo` verified live: all 9 scenes PASS with a real adjudicator; scenes 2 to 5 and 7 report PENDING until P2 lands |
 | P3-08 | Validation sprint log and interview notes (outside repo if personal data) | docs/07 s7 | TODO | | |
