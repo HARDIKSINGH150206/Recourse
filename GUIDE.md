@@ -17,13 +17,13 @@ Reading order for an agent: this file, then `CLAUDE.md` (project rules), then on
 
 ## 2. People and ownership
 
-Fill in the names once (single edit to this table, then everyone pulls).
+Two people cover the three lanes for now (assigned 2026-10-29). If a third person joins, hand them lane P3 and update this table and `.github/CODEOWNERS` in one commit.
 
 | Lane | Person | GitHub handle | Focus |
 |---|---|---|---|
-| **P1: Backend and Blockchain** | _TBD_ | _TBD_ | Contracts, crypto core, gateway, merchant SDK, API server |
-| **P2: AI** | _TBD_ | _TBD_ | Rules, LLM pipeline, mandate compiler, benchmark |
-| **P3: Frontend and Research** | _TBD_ | _TBD_ | Dashboard, demo agent and merchant, scaffold and CI, pitch, market research |
+| **P1: Backend and Blockchain** | Hardik Singh | `HARDIKSINGH150206` | Contracts, crypto core, gateway, merchant SDK, API server |
+| **P2: AI** | Ayush Pundhir | `ayush983215` | Rules, LLM pipeline, mandate compiler, benchmark |
+| **P3: Frontend and Research** | Hardik Singh (until a third person joins) | `HARDIKSINGH150206` | Dashboard, demo agent and merchant, scaffold and CI, pitch, market research |
 
 ### 2.1 Module map (single owner each)
 

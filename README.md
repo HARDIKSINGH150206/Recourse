@@ -74,4 +74,4 @@ Full setup, Base Sepolia instructions and troubleshooting: `docs/DEVELOPMENT.md`
 
 ## Team
 
-Team Return0 / The Big O. Roles: see `docs/07-build-plan.md` section 1 (to be assigned).
+Team Return0 / The Big O. Roles: Hardik Singh (backend, blockchain, frontend, research), Ayush Pundhir (AI). See `GUIDE.md` section 2.

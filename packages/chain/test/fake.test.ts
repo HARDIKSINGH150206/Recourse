@@ -206,7 +206,13 @@ describe("FakeEscrow: lifecycle", () => {
     const seen: string[] = [];
     ctx.fake.as(arbiter.address).watchDisputed((e) => seen.push(`d:${e.escrowId}`));
     ctx.fake.as(arbiter.address).watchResolved((e) => seen.push(`r:${e.outcome}:${e.fault}`));
+    expect(await ctx.fake.as(owner.address).findDisputed(escrowId)).toBeNull();
     await ctx.fake.as(owner.address).dispute(escrowId, reason);
+    expect(await ctx.fake.as(owner.address).findDisputed(escrowId)).toEqual({
+      escrowId,
+      by: owner.address,
+      reasonHash: reason,
+    });
     await reverts(ctx.fake.as(stranger.address).release(escrowId), "WrongState");
     await reverts(
       ctx.fake.as(owner.address).resolve(escrowId, "REFUND", "MERCHANT", reason),

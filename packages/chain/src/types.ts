@@ -74,6 +74,8 @@ export interface EscrowApi {
   agentReputation(agent: Address): Promise<ReputationRecord>;
   merchantReputation(merchant: Address): Promise<ReputationRecord>;
 
+  /** The Disputed event for an escrow, if any (carries the on-chain reasonHash). */
+  findDisputed(escrowId: Hex): Promise<DisputedEvent | null>;
   watchDisputed(cb: (e: DisputedEvent) => void): () => void;
   watchResolved(cb: (e: ResolvedEvent) => void): () => void;
 }
