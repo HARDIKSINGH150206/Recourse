@@ -1,0 +1,14 @@
+{
+  "name": "@recourse/bench",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@recourse/shared": "workspace:*",
+    "@recourse/rules-engine": "workspace:*",
+    "@recourse/adjudicator": "workspace:*"
+  }
+}

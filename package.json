@@ -1,0 +1,36 @@
+{
+  "name": "recourse",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "packageManager": "pnpm@10.2.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "pnpm -r --parallel --if-present --filter \"./apps/*\" dev",
+    "chain:up": "bash scripts/dev-chain.sh",
+    "chain:deploy": "cd contracts && forge script script/Deploy.s.sol --rpc-url ${RPC_URL:-http://127.0.0.1:8545} --broadcast",
+    "sync:deployment": "tsx scripts/sync-deployment.ts",
+    "seed": "tsx scripts/seed.ts",
+    "demo": "tsx scripts/demo.ts",
+    "demo:reset": "tsx scripts/reset-demo.ts",
+    "test": "pnpm -r --if-present test",
+    "contracts:install": "bash scripts/install-contract-deps.sh",
+    "test:contracts": "cd contracts && forge test -vvv",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "vectors": "tsx scripts/gen-test-vectors.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.17.0",
+    "@types/node": "^22.10.0",
+    "eslint": "^9.17.0",
+    "prettier": "^3.4.2",
+    "tsx": "^4.19.2",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.19.0",
+    "vitest": "^2.1.8"
+  }
+}
