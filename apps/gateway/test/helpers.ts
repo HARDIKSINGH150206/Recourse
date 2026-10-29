@@ -72,7 +72,12 @@ export const BODY = JSON.stringify({
 });
 
 export async function makeHarness(
-  opts: { devRoutes?: boolean; maxEntries?: number } = {},
+  opts: {
+    devRoutes?: boolean;
+    maxEntries?: number;
+    merchants?: Record<string, string>;
+    realFetch?: boolean;
+  } = {},
 ): Promise<Harness> {
   const clock = new ManualClock(T0);
   const db = openDatabase(":memory:");
@@ -188,11 +193,11 @@ export async function makeHarness(
     chain: { getEscrow: (id) => fake.as(agent.address).getEscrow(id), blockNumber: async () => 7 },
     clock,
     logger,
-    merchants: { weather: "http://merchant.test:4200" },
+    merchants: opts.merchants ?? { weather: "http://merchant.test:4200" },
     chainId: CHAIN_ID,
     escrow: fake.address,
     gatewayAddress: gateway.address,
-    fetchImpl,
+    fetchImpl: opts.realFetch ? undefined : fetchImpl,
     upstreamTimeoutMs: 1000,
     maxResponseBytes: 5_000_000,
     devRoutes: opts.devRoutes ?? false,
