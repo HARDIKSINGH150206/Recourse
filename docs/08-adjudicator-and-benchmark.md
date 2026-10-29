@@ -44,8 +44,12 @@ type RuleInput = {
   response?: { status: number; bodyText?: string; bodyJson?: unknown; latencyMs: number; ts: number };  // from `response` entry + blob
   receipt?: { valid: boolean; responseHashMatches: boolean };
   aliasTable: Record<string, string[]>;                                // config/alias-table.json
+  evidenceValid: boolean;                                              // R0: the verifyBundle result
+  cites: { request: number; response?: number };                      // log seq numbers a decisive result cites
 };
 ```
+
+`evidenceValid` and `cites` are additions to the first draft of this input; the code is in `packages/rules-engine/src/types.ts`.
 
 | Rule | Check | Result keys | Decisive outcome |
 |---|---|---|---|
@@ -61,7 +65,13 @@ type RuleInput = {
 
 Order: R0, R7, R1, R2, R3, R4, R5, R6. **R8 runs on every case first, regardless of any later decisive failure**, so `injection_detected` is always recorded. The first decisive failure among the other rules ends the pipeline with a verdict whose claims cite the entries that prove it (`response` entry seq, `request` entry seq). When no rule is decisive and R0 to R7 pass or are ambiguous, the pipeline continues to AI (Step 3) so that semantic problems can still be caught.
 
-`RuleResults` is a flat object of all result keys above plus `decisive: null | { class, outcome, fault, reason, cites: number[] }`.
+`RuleResults` is a flat object of all result keys above plus `decisive: null | { class, outcome, fault, reason, cites: number[] }` and `abstain: null | { reason: "evidence_invalid" | "evidence_incomplete", cites: number[] }`. R0 and R3 end in `abstain` (a `needs_human_review`), not `decisive`; at most one of the two is set. `decide(results)` returns `{ kind: "verdict", ... }`, `{ kind: "review", ... }` or `null` (go to the AI stage).
+
+Implementation notes (`packages/rules-engine`):
+- A rule that cannot be evaluated reports its failing value (for example `schema_valid: false` when there is no response); the order above decides which rule ends the pipeline, so such values are never the reason for a verdict. `entity_match` is `ambiguous` when the request named no city or the body could not be read.
+- R1 passes only for a 2xx status with a non-empty body text. R2 and R5 pass at the exact limit. R7 requires `createdAt < expiresAt` and compares merchants case-insensitively.
+- R6 normalises names (accents and punctuation removed, lowercase). `alias` means both names are in one group of `config/alias-table.json` (canonical name plus aliases, including forms like "mumbai in"); `ambiguous` means a shared token only.
+- R8 is a phrase list, a tripwire only; the real defence is that the judge never sees raw merchant text.
 
 ## 4. AI stage (`@recourse/adjudicator`)
 

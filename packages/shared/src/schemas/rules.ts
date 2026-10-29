@@ -15,6 +15,17 @@ export const DecisiveSchema = z
   })
   .strict();
 
+/**
+ * Rules that end the pipeline with `needs_human_review` instead of a verdict (R0 evidence invalid,
+ * R3 receipt missing or invalid). Additive, optional so earlier fixtures stay valid.
+ */
+export const AbstainSchema = z
+  .object({
+    reason: z.enum(["evidence_invalid", "evidence_incomplete"]),
+    cites: z.array(z.number().int().positive()),
+  })
+  .strict();
+
 export const RuleResultsSchema = z
   .object({
     evidence_valid: z.boolean(),
@@ -30,5 +41,6 @@ export const RuleResultsSchema = z
     entity_match: z.enum(["exact", "alias", "different", "ambiguous"]),
     injection_suspected: z.boolean(),
     decisive: DecisiveSchema.nullable(),
+    abstain: AbstainSchema.nullable().optional(),
   })
   .strict();
