@@ -87,3 +87,39 @@ describe("keys", () => {
     expect(() => assertLocalChain(84532)).toThrow(/local-only/);
   });
 });
+
+import { findSecrets } from "./secrets.js";
+
+describe("secret scan", () => {
+  const real = "0x" + "ab".repeat(32);
+  const anvil = ANVIL_KEYS.OWNER_PRIVATE_KEY;
+
+  it("flags a non-anvil key assignment in several syntaxes", () => {
+    for (const text of [
+      `PRIVATE_KEY=${real}`,
+      `const privateKey = "${real}"`,
+      `{ "secret": "${real}" }`,
+      `MNEMONIC: ${real}`,
+    ]) {
+      expect(findSecrets([{ path: "a.ts", text }])).toHaveLength(1);
+    }
+  });
+
+  it("allows anvil dev keys, bare hashes and the example env", () => {
+    expect(
+      findSecrets([
+        { path: "a.ts", text: `OWNER_PRIVATE_KEY=${anvil.toUpperCase().replace("0X", "0x")}` },
+      ]),
+    ).toEqual([]);
+    expect(findSecrets([{ path: "a.ts", text: `const root = "${real}"` }])).toEqual([]);
+    expect(findSecrets([{ path: ".env.example", text: "OWNER_PRIVATE_KEY=" }])).toEqual([]);
+  });
+
+  it("flags committed env files and PEM keys", () => {
+    expect(findSecrets([{ path: ".env", text: "" }])).toHaveLength(1);
+    expect(findSecrets([{ path: "apps/api/.env.production", text: "" }])).toHaveLength(1);
+    expect(findSecrets([{ path: "k.pem", text: "-----BEGIN " + "PRIVATE KEY-----" }])).toHaveLength(
+      1,
+    );
+  });
+});

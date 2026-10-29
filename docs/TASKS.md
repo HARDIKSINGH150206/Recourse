@@ -4,7 +4,7 @@ Task board per lane. We do not use GitHub issues (D-023). Rules: `GUIDE.md` sect
 Status values: `TODO`, `IN_PROGRESS`, `IN_REVIEW`, `DONE`, `BLOCKED(<ID or person>)`, `CUT`.
 Only the lane owner edits their table. To request work from another lane, add a row in their table prefixed `REQUEST(P<you>):`.
 
-Last updated: 2026-10-29 (foundation commit on dev)
+Last updated: 2026-10-29 (foundation + hardening on dev)
 
 ## M0 checkpoint (foundations, 10% of build time)
 - [ ] Interfaces and `packages/shared` frozen
@@ -19,7 +19,7 @@ Last updated: 2026-10-29 (foundation commit on dev)
 | P1-04 | RecourseEscrow: registerMandate, createEscrow | E1, docs/04 s1 | IN_REVIEW | dev | Written but NOT compiled yet (no Foundry on build machine). Run `pnpm contracts:install && pnpm test:contracts` |
 | P1-05 | RecourseEscrow: release, dispute, resolve, anchorRoot, pause | E2 to E5 | IN_REVIEW | dev | Same as P1-04; refund does not restore `spent` (decide, log in DECISIONS) |
 | P1-06 | Contract unit, fuzz and invariant tests | docs/09 s4, docs/10 | IN_REVIEW | dev | Unit, fuzz, invariant tests written, never executed |
-| P1-07 | packages/chain with fake chain | docs/04 s5 | TODO | | |
+| P1-07 | packages/chain with fake chain | docs/04 s5 | IN_REVIEW | dev | ABI, client, FakeEscrow done and tested; real client not yet run against anvil |
 | P1-08 | Gateway DB schema (Drizzle) and migrations | GUIDE s6 | TODO | | |
 | P1-09 | Gateway proxy, entries, batching, tree heads, anchoring | G1 to G3 | TODO | | |
 | P1-10 | Merchant SDK (402, receipts) | S1, P1 to P3 | TODO | | |

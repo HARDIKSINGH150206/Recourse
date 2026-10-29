@@ -22,7 +22,8 @@
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
     "vectors": "tsx scripts/gen-test-vectors.ts",
-    "env:local": "tsx scripts/local-env.ts"
+    "env:local": "tsx scripts/local-env.ts",
+    "check:secrets": "tsx scripts/check-secrets.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
