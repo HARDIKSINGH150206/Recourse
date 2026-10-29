@@ -23,4 +23,29 @@ describe("hash", () => {
     expect(() => canonicalHash({ x: 1.5 })).toThrow(/float/);
     expect(() => canonicalHash({ x: 10n })).toThrow(/bigint/);
   });
+
+  // Known answers pinned so a change in the canonicalisation library cannot silently change
+  // every hash in the system (this library is hash-critical; its version is pinned exactly).
+  it("matches RFC 8785 known answers", () => {
+    // keys sorted by UTF-16 code units
+    expect(canonicalJson({ "\u20ac": 1, "\r": 2, "\ud83d\ude00": 3, "1": 4, a: 5 })).toBe(
+      '{"\\r":2,"1":4,"a":5,"\u20ac":1,"\ud83d\ude00":3}',
+    );
+    // string escaping
+    expect(canonicalJson('a\u0000b\n"\\\u007f')).toBe('"a\\u0000b\\n\\"\\\\\u007f"');
+    // no insignificant whitespace, nested structures, null and booleans
+    expect(canonicalJson({ z: [true, false, null, { y: [] }], a: {} })).toBe(
+      '{"a":{},"z":[true,false,null,{"y":[]}]}',
+    );
+    // integers
+    expect(canonicalJson([0, -0, 1, -1, 123456789012])).toBe("[0,0,1,-1,123456789012]");
+  });
+
+  it("pins hashes of canonical documents", () => {
+    expect(canonicalHash({ version: 1, category: "weather_data_api" })).toBe(
+      keccakBytes('{"category":"weather_data_api","version":1}'),
+    );
+    expect(canonicalHash(null)).toBe(keccakBytes("null"));
+    expect(canonicalHash([])).toBe(keccakBytes("[]"));
+  });
 });

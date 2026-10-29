@@ -187,7 +187,7 @@ importers:
         specifier: ^1.0.7
         version: 1.0.8
       json-canonicalize:
-        specifier: ^3.0.1
+        specifier: 3.0.1
         version: 3.0.1
       pino:
         specifier: ^9
