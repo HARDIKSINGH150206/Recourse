@@ -21,6 +21,8 @@ import type { MandateRepository } from "../db/repositories/mandates.js";
 import type { ArbiterChain, EvidencePort } from "../ports.js";
 
 export const MAX_REASON_CHARS = 2000;
+const MAX_PENDING_REASONS = 1000;
+const PENDING_REASON_TTL_SECONDS = 3600;
 const MAX_BLOBS = 20;
 
 export interface DisputeServiceDeps {
@@ -85,10 +87,21 @@ export class DisputeService {
       openedTx: txHash,
       createdAt: this.d.clock.now(),
     });
+    // A reason posted before this event was indexed is attached now; it was stored by its hash.
+    const early = this.d.disputes.takePendingReason(ev.reasonHash);
+    if (early !== null && keccak256(toBytes(early)) === ev.reasonHash) {
+      this.d.disputes.setReasonIfOpen(disputeId, early, this.d.clock.now());
+    }
     const record = this.d.disputes.byEscrow(ev.escrowId)!;
-    this.d.logger.info({ dispute_id: record.disputeId, escrow_id: ev.escrowId }, "dispute opened");
-    // Give the owner a moment to post the reason text; POST /disputes triggers it sooner.
-    this.schedule(() => void this.safeProcess(record.disputeId), this.d.reasonWaitSeconds * 1000);
+    this.d.logger.info(
+      { dispute_id: record.disputeId, escrow_id: ev.escrowId, reason: early !== null },
+      "dispute opened",
+    );
+    // Otherwise give the owner a moment to post the reason text; POST /disputes starts it sooner.
+    this.schedule(
+      () => void this.safeProcess(record.disputeId),
+      early !== null ? 0 : this.d.reasonWaitSeconds * 1000,
+    );
     return record;
   }
 
@@ -96,7 +109,10 @@ export class DisputeService {
    * Attach the owner's reason text. It must hash to the reasonHash in the on-chain event, so the
    * text cannot be swapped after the fact. Starts adjudication immediately.
    */
-  async submitReason(escrowId: Hex, reasonText: string): Promise<DisputeRecord> {
+  async submitReason(
+    escrowId: Hex,
+    reasonText: string,
+  ): Promise<DisputeRecord | { awaitingDispute: true; reasonHash: Hex }> {
     if (reasonText.length > MAX_REASON_CHARS) {
       throw new RecourseError(
         "bad_request",
@@ -106,7 +122,25 @@ export class DisputeService {
     let record = this.d.disputes.byEscrow(escrowId);
     if (!record) {
       const ev = await this.d.chain.findDisputed(escrowId);
-      if (!ev) throw new RecourseError("not_found", "no Disputed event for this escrow");
+      if (!ev) {
+        // The dispute transaction has not been indexed yet. Hold the text by its hash: it can only
+        // ever attach to a dispute that committed to exactly this text, so order does not matter.
+        const reasonHash = keccak256(toBytes(reasonText));
+        const stored = this.d.disputes.insertPendingReason(
+          reasonHash,
+          reasonText,
+          this.d.clock.now(),
+          MAX_PENDING_REASONS,
+          PENDING_REASON_TTL_SECONDS,
+        );
+        if (!stored) {
+          throw new RecourseError(
+            "upstream_error",
+            "too many reasons are waiting for their disputes; retry shortly",
+          );
+        }
+        return { awaitingDispute: true, reasonHash };
+      }
       record = await this.onDisputed(ev);
     }
     if (keccak256(toBytes(reasonText)) !== record.reasonHash) {

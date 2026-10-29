@@ -1,8 +1,8 @@
-import { and, desc, eq, inArray } from "drizzle-orm";
+import { and, count, desc, eq, inArray, lt } from "drizzle-orm";
 import type { Hex } from "viem";
 import { VerdictSchema, type Verdict, type VerificationReport } from "@recourse/shared";
 import type { ApiDb } from "../client.js";
-import { benchRuns, disputes, reviews, verdicts } from "../schema.js";
+import { benchRuns, disputes, pendingReasons, reviews, verdicts } from "../schema.js";
 
 export type DisputeStatus = (typeof disputes.$inferSelect)["status"];
 
@@ -140,6 +140,40 @@ export class DisputeRepository {
       .set({ status: "opened", updatedAt: now })
       .where(eq(disputes.status, "adjudicating"))
       .run().changes;
+  }
+
+  // ---- reasons posted before their dispute event was indexed
+
+  /** Returns false when the table is full (callers refuse rather than grow without bound). */
+  insertPendingReason(
+    hash: string,
+    text: string,
+    now: number,
+    maxRows: number,
+    ttlSeconds: number,
+  ): boolean {
+    this.db
+      .delete(pendingReasons)
+      .where(lt(pendingReasons.createdAt, now - ttlSeconds))
+      .run();
+    const n = this.db.select({ n: count() }).from(pendingReasons).get()?.n ?? 0;
+    if (n >= maxRows) return false;
+    this.db
+      .insert(pendingReasons)
+      .values({ reasonHash: hash, reasonText: text, createdAt: now })
+      .onConflictDoNothing()
+      .run();
+    return true;
+  }
+
+  /** Remove and return the pending text for this hash, if any. */
+  takePendingReason(hash: string): string | null {
+    return this.db.transaction((tx) => {
+      const row = tx.select().from(pendingReasons).where(eq(pendingReasons.reasonHash, hash)).get();
+      if (!row) return null;
+      tx.delete(pendingReasons).where(eq(pendingReasons.reasonHash, hash)).run();
+      return row.reasonText;
+    });
   }
 
   // ---- verdicts and reviews (immutable)

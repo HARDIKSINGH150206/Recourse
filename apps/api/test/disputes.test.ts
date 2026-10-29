@@ -6,6 +6,7 @@ import {
   ESCROW_ID,
   MANDATE_ID,
   REASON,
+  REASON_HASH,
   REQUEST_ID,
   accounts,
   makeVerdict,
@@ -143,7 +144,7 @@ describe("POST /disputes validation", () => {
     expect(w.json(r).error.message).toMatch(/reasonHash/);
   });
 
-  it("404s for an escrow that was never disputed, and validates the body", async () => {
+  it("holds the reason of a not-yet-disputed escrow, and validates the body", async () => {
     const w = await makeWorld();
     await w.storeMandate();
     const { escrowId } = await w.fake
@@ -157,7 +158,7 @@ describe("POST /disputes validation", () => {
           payload: { escrow_id: escrowId, reason_text: REASON },
         })
       ).statusCode,
-    ).toBe(404);
+    ).toBe(202); // held until the dispute is indexed
     expect(
       (
         await w.app.inject({
@@ -216,6 +217,66 @@ describe("POST /disputes validation", () => {
       payload: { escrow_id: escrowId, reason_text: REASON },
     });
     expect(r.statusCode).toBe(409);
+  });
+});
+
+describe("reason posted before the dispute is indexed", () => {
+  it("is held by its hash and attached when the Disputed event arrives, in either order", async () => {
+    const w = await makeWorld();
+    await w.storeMandate();
+    const { escrowId } = await w.fake
+      .as(accounts.agent.address)
+      .createEscrow(MANDATE_ID, accounts.merchant.address, 10_000n, REQUEST_ID);
+
+    // the dashboard posts the text first (the dispute tx is still confirming)
+    const early = await w.app.inject({
+      method: "POST",
+      url: "/disputes",
+      payload: { escrow_id: escrowId, reason_text: REASON },
+    });
+    expect(early.statusCode).toBe(202);
+    expect(w.json(early)).toEqual({ status: "awaiting_dispute", reason_hash: REASON_HASH });
+    expect(w.disputeRepo.byEscrow(escrowId)).toBeNull();
+
+    w.clock.advance(20);
+    await w.fake.as(accounts.owner.address).dispute(escrowId, REASON_HASH);
+    await new Promise((r) => setTimeout(r, 5));
+    expect(w.scheduled.map((s) => s.ms)).toEqual([0]); // no waiting: the reason is already here
+    await w.runScheduled();
+
+    expect(w.adjudicator.calls[0]!.reason_text).toBe(REASON);
+    expect(w.disputeRepo.get("dispute-1")!.status).toBe("resolved");
+    // consumed: the held text is gone
+    expect(w.disputeRepo.takePendingReason(REASON_HASH)).toBeNull();
+  });
+
+  it("text that does not match the dispute's reasonHash never attaches", async () => {
+    const w = await makeWorld();
+    await w.storeMandate();
+    const { escrowId } = await w.fake
+      .as(accounts.agent.address)
+      .createEscrow(MANDATE_ID, accounts.merchant.address, 10_000n, REQUEST_ID);
+    await w.app.inject({
+      method: "POST",
+      url: "/disputes",
+      payload: { escrow_id: escrowId, reason_text: "an attacker's invented reason" },
+    });
+    w.clock.advance(20);
+    await w.fake.as(accounts.owner.address).dispute(escrowId, REASON_HASH);
+    await new Promise((r) => setTimeout(r, 5));
+    await w.runScheduled();
+    expect(w.adjudicator.calls[0]!.reason_text).toBeNull();
+  });
+
+  it("is bounded and expires", async () => {
+    const w = await makeWorld();
+    const r = w.disputeRepo;
+    expect(r.insertPendingReason("0xa", "a", 100, 2, 60)).toBe(true);
+    expect(r.insertPendingReason("0xb", "b", 100, 2, 60)).toBe(true);
+    expect(r.insertPendingReason("0xc", "c", 100, 2, 60)).toBe(false); // full
+    expect(r.insertPendingReason("0xc", "c", 200, 2, 60)).toBe(true); // the old ones expired
+    expect(r.takePendingReason("0xa")).toBeNull();
+    expect(r.takePendingReason("0xc")).toBe("c");
   });
 });
 

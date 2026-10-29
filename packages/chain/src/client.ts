@@ -28,6 +28,8 @@ export interface ChainConfig {
   escrow: Address;
   /** Signer for write calls. Read-only clients omit it. */
   account?: Account;
+  /** Receipt and event polling interval. Defaults: 300 ms on chain 31337, 2 s elsewhere. */
+  pollingIntervalMs?: number;
 }
 
 const ZERO_ADDR = "0x0000000000000000000000000000000000000000";
@@ -56,7 +58,9 @@ export function createEscrowClient(cfg: ChainConfig): EscrowApi & {
     nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
     rpcUrls: { default: { http: [cfg.rpcUrl] } },
   };
-  const publicClient = createPublicClient({ chain, transport: http(cfg.rpcUrl) });
+  // Local chains confirm instantly; poll fast so tx waits and event watchers are not 4s late.
+  const pollingInterval = cfg.pollingIntervalMs ?? (cfg.chainId === 31337 ? 300 : 2000);
+  const publicClient = createPublicClient({ chain, transport: http(cfg.rpcUrl), pollingInterval });
   const walletClient = cfg.account
     ? createWalletClient({ account: cfg.account, chain, transport: http(cfg.rpcUrl) })
     : null;

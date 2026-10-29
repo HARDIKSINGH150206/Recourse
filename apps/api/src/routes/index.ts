@@ -112,6 +112,10 @@ export function registerRoutes(app: FastifyInstance, deps: ApiDeps): void {
   app.post("/disputes", async (req, reply) => {
     const b = CreateDisputeBody.parse(req.body);
     const r = await deps.disputeService.submitReason(b.escrow_id as Hex, b.reason_text);
+    if ("awaitingDispute" in r) {
+      // not on-chain yet: the text is held and attaches itself when the Disputed event is indexed
+      return reply.code(202).send({ status: "awaiting_dispute", reason_hash: r.reasonHash });
+    }
     return reply.code(202).send(disputeJson(deps, r));
   });
 

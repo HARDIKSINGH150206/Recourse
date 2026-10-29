@@ -79,3 +79,14 @@ export const reviews = sqliteTable("reviews", {
   commitment: text("commitment").notNull(),
   createdAt: integer("created_at").notNull(),
 });
+
+/**
+ * A reason posted before its on-chain Disputed event was indexed (the owner's wallet confirms the
+ * dispute tx a few seconds after the dashboard posts the text). Keyed by the text's hash, so it
+ * can only ever attach to the dispute that committed to exactly this text. Bounded and short-lived.
+ */
+export const pendingReasons = sqliteTable("pending_reasons", {
+  reasonHash: text("reason_hash").primaryKey(),
+  reasonText: text("reason_text").notNull(),
+  createdAt: integer("created_at").notNull(),
+});

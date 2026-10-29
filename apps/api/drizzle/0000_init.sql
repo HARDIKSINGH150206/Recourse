@@ -39,6 +39,12 @@ CREATE TABLE `mandates` (
 );
 --> statement-breakpoint
 CREATE INDEX `mandates_owner` ON `mandates` (`owner`);--> statement-breakpoint
+CREATE TABLE `pending_reasons` (
+	`reason_hash` text PRIMARY KEY NOT NULL,
+	`reason_text` text NOT NULL,
+	`created_at` integer NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE `reviews` (
 	`dispute_id` text PRIMARY KEY NOT NULL,
 	`outcome` text NOT NULL,

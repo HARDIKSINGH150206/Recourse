@@ -1,6 +1,6 @@
 {
-  "id": "2ccb6c3f-c267-4fb7-9bdb-fb81032a6319",
-  "prevId": "b03214bf-68e3-47b7-b178-4c6a979c87dc",
+  "id": "022e583d-bfc0-42bc-9a5c-07ef7aee7263",
+  "prevId": "8359f85b-86f5-4bd9-a0dc-e98ccc11a830",
   "version": "6",
   "dialect": "sqlite",
   "tables": {
@@ -248,6 +248,37 @@
           "isUnique": false
         }
       },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "pending_reasons": {
+      "name": "pending_reasons",
+      "columns": {
+        "reason_hash": {
+          "name": "reason_hash",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "reason_text": {
+          "name": "reason_text",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        }
+      },
+      "indexes": {},
       "foreignKeys": {},
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
