@@ -1,6 +1,8 @@
 {
   "temperature": 0,
   "seed": 42,
+  "top_p": 1,
+  "num_ctx": 4096,
   "extractor": { "name": "TBD-spike-S3" },
   "judges": [{ "name": "TBD-spike-S3" }]
 }
