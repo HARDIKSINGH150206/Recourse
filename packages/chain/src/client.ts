@@ -206,6 +206,20 @@ export function createEscrowClient(cfg: ChainConfig): EscrowApi & {
     agentReputation: (a) => read("agentReputation", [a]),
     merchantReputation: (a) => read("merchantReputation", [a]),
 
+    async findDisputed(escrowId) {
+      const logs = await publicClient.getContractEvents({
+        address,
+        abi: escrowAbi,
+        eventName: "Disputed",
+        args: { escrowId },
+        fromBlock: 0n,
+      });
+      const l = logs[0];
+      return l
+        ? { escrowId: l.args.escrowId!, by: l.args.by!, reasonHash: l.args.reasonHash! }
+        : null;
+    },
+
     watchDisputed(cb) {
       return publicClient.watchContractEvent({
         address,

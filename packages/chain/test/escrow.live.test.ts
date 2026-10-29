@@ -133,7 +133,9 @@ describe.skipIf(!up)("RecourseEscrow on local anvil", () => {
       code: "NotOwner",
     });
 
+    expect(await as(agent).findDisputed(escrowId)).toBeNull();
     await as(owner).dispute(escrowId, keccak256(toHex("bad data")));
+    expect(await as(agent).findDisputed(escrowId)).toMatchObject({ escrowId, reasonHash: keccak256(toHex("bad data")) });
     await expect(
       as(owner).resolve(escrowId, "REFUND", "MERCHANT", keccak256(toHex("v"))),
     ).rejects.toMatchObject({ code: "NotArbiter" });
