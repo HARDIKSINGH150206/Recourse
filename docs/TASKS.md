@@ -14,12 +14,12 @@ Last updated: 2026-10-29 (foundation + hardening on dev)
 | ID | Task | Req / spec | Status | Branch | Notes / handoff |
 |---|---|---|---|---|---|
 | P1-01 | Spike S1 escrow path on Base Sepolia | docs/07 s2 | TODO | | |
-| P1-02 | Spike S5 mandate digest matches in Solidity and viem | docs/03 s2, s13 | TODO | | |
+| P1-02 | Spike S5 mandate digest matches in Solidity and viem | docs/03 s2, s13 | DONE | dev | Verified live on anvil: viem digest == contract mandateId (packages/chain live test) |
 | P1-03 | shared: hash, eip712, merkle, commit, bundle, vectors | docs/03 | DONE | dev | Foundation commit. Schemas for verdict/rules/facts are first drafts for P2 to refine |
-| P1-04 | RecourseEscrow: registerMandate, createEscrow | E1, docs/04 s1 | IN_REVIEW | dev | Written but NOT compiled yet (no Foundry on build machine). Run `pnpm contracts:install && pnpm test:contracts` |
-| P1-05 | RecourseEscrow: release, dispute, resolve, anchorRoot, pause | E2 to E5 | IN_REVIEW | dev | Same as P1-04; refund does not restore `spent` (decide, log in DECISIONS) |
-| P1-06 | Contract unit, fuzz and invariant tests | docs/09 s4, docs/10 | IN_REVIEW | dev | Unit, fuzz, invariant tests written, never executed |
-| P1-07 | packages/chain with fake chain | docs/04 s5 | IN_REVIEW | dev | ABI, client, FakeEscrow done and tested; real client not yet run against anvil |
+| P1-04 | RecourseEscrow: registerMandate, createEscrow | E1, docs/04 s1 | IN_REVIEW | dev | Compiles; 37 forge tests pass (unit, fuzz, invariant); live-tested from viem |
+| P1-05 | RecourseEscrow: release, dispute, resolve, anchorRoot, pause | E2 to E5 | IN_REVIEW | dev | Passing. Open decision: refund does not restore `spent` (log in DECISIONS) |
+| P1-06 | Contract unit, fuzz and invariant tests | docs/09 s4, docs/10 | IN_REVIEW | dev | 31 unit, 5 fuzz, 3 invariants passing |
+| P1-07 | packages/chain with fake chain | docs/04 s5 | IN_REVIEW | dev | ABI, client, FakeEscrow done; real client verified against anvil (`pnpm --filter @recourse/chain test:live`) |
 | P1-08 | Gateway DB schema (Drizzle) and migrations | GUIDE s6 | TODO | | |
 | P1-09 | Gateway proxy, entries, batching, tree heads, anchoring | G1 to G3 | TODO | | |
 | P1-10 | Merchant SDK (402, receipts) | S1, P1 to P3 | TODO | | |
