@@ -119,6 +119,9 @@ importers:
       '@recourse/shared':
         specifier: workspace:*
         version: link:../shared
+      viem:
+        specifier: ^2.21.54
+        version: 2.57.13(typescript@5.9.3)(zod@3.25.76)
 
   packages/llm:
     dependencies:
