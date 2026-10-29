@@ -93,6 +93,9 @@ importers:
       '@recourse/chain':
         specifier: workspace:*
         version: link:../../packages/chain
+      '@recourse/shared':
+        specifier: workspace:*
+        version: link:../../packages/shared
       '@tanstack/react-query':
         specifier: ^5.62.0
         version: 5.105.0(@types/react@18.3.31)(react@18.3.1)
@@ -198,6 +201,9 @@ importers:
 
   apps/gateway:
     dependencies:
+      '@fastify/cors':
+        specifier: ^11.3.1
+        version: 11.3.1
       '@recourse/chain':
         specifier: workspace:*
         version: link:../../packages/chain

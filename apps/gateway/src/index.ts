@@ -44,6 +44,7 @@ const deps = {
   upstreamTimeoutMs: 15_000,
   maxResponseBytes: 5_000_000,
   devRoutes: cfg.ENABLE_DEV_ROUTES === "1",
+  corsOrigins: ["http://localhost:5173", "http://127.0.0.1:5173"],
 };
 
 const app = buildServer(deps);

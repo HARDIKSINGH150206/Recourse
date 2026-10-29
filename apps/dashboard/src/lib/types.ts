@@ -79,3 +79,56 @@ export interface StoredMandate {
   registeredOnchain?: boolean;
   mandate: MandateJson;
 }
+
+export interface Claim {
+  text: string;
+  cites: number[];
+}
+
+export interface Verdict {
+  dispute_id: string;
+  escrow_id: string;
+  class: number | null;
+  class_name: string | null;
+  outcome: "REFUND" | "RELEASE" | null;
+  fault: "NONE" | "AGENT" | "MERCHANT" | null;
+  decided_by: "rules" | "ai" | "ai_quorum" | "human";
+  claims: Claim[];
+  explanation: string;
+  injection_detected: boolean;
+  evidence_root: string[];
+  prompt_hash: string;
+  commitment: string;
+  review_reason?: string;
+  created_at: number;
+}
+
+export interface Dispute {
+  dispute_id: string;
+  status: string;
+  note: string | null;
+  escrow_id: string;
+  mandate_id: string;
+  request_id: string;
+  reason_text: string | null;
+  verdict: Verdict | null;
+  review: { outcome: string; fault: string; note: string } | null;
+  evidence_report: Record<string, unknown> | null;
+  txs: { dispute: string | null; resolve: string | null };
+  created_at: number;
+  updated_at: number;
+}
+
+export interface LogEntryRow {
+  seq: number;
+  ts: number;
+  type: string;
+  request_id: string | null;
+  entry_hash: string;
+}
+
+export interface Reputation {
+  address: string;
+  as_agent: { disputes: number; faults: number };
+  as_merchant: { disputes: number; faults: number };
+}

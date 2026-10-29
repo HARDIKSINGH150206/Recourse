@@ -5,6 +5,8 @@ import { Hash } from "./Copy";
 const links = [
   ["/mandate", "Mandate"],
   ["/run", "Run"],
+  ["/disputes", "Disputes"],
+  ["/verify", "Verify"],
 ] as const;
 
 export function Layout() {

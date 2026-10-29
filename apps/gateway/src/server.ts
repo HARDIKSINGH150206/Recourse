@@ -1,3 +1,4 @@
+import cors from "@fastify/cors";
 import Fastify, { type FastifyBaseLogger, type FastifyInstance } from "fastify";
 import { ZodError } from "zod";
 import { RecourseError, parseLenientJson } from "@recourse/shared";
@@ -29,6 +30,11 @@ export function buildServer(deps: GatewayDeps): FastifyInstance {
   app.setNotFoundHandler((_req, reply) =>
     reply.code(404).send({ error: { code: "not_found", message: "route not found" } }),
   );
+
+  if (deps.corsOrigins && deps.corsOrigins.length > 0) {
+    // read-only: the dashboard fetches evidence and verifies it in the browser
+    app.register(cors, { origin: deps.corsOrigins, methods: ["GET", "OPTIONS"] });
+  }
 
   // The proxy replaces content-type parsers (raw bytes), so it lives in its own scope.
   app.register(async (scope) => registerProxy(scope, deps));

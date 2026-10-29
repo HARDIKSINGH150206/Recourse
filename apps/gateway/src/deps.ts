@@ -27,4 +27,6 @@ export interface GatewayDeps {
   upstreamTimeoutMs: number;
   maxResponseBytes: number;
   devRoutes: boolean;
+  /** Browser origins allowed to read the evidence and log routes (the dashboard). None: no CORS headers. */
+  corsOrigins?: string[];
 }
