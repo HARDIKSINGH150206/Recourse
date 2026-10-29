@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "@openzeppelin/merkle-tree": "^1.0.7",
-    "json-canonicalize": "^3.0.1",
+    "json-canonicalize": "3.0.1",
     "pino": "^9",
     "viem": "^2.21.54",
     "zod": "^3.24.1"
