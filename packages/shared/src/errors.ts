@@ -4,6 +4,8 @@ export type ErrorCode =
   | "not_found"
   | "conflict"
   | "payment_required"
+  | "forbidden"
+  | "not_implemented"
   | "upstream_error"
   | "evidence_invalid"
   | "internal";
@@ -15,6 +17,8 @@ export interface ApiErrorBody {
 const HTTP_STATUS: Record<ErrorCode, number> = {
   bad_request: 400,
   unauthorized: 401,
+  forbidden: 403,
+  not_implemented: 501,
   payment_required: 402,
   not_found: 404,
   conflict: 409,

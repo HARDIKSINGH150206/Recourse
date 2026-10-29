@@ -85,7 +85,7 @@ interface Spec {
   fields: Record<string, unknown>;
 }
 
-const specs: Spec[] = [
+const makeSpecs = (escrowIdForProof: Hex): Spec[] => [
   {
     type: "request",
     fields: {
@@ -116,7 +116,7 @@ const specs: Spec[] = [
   {
     type: "payment_proof",
     fields: {
-      escrow_id: ESCROW_ID,
+      escrow_id: escrowIdForProof,
       tx_hash: keccakBytes("tx-1"),
       chain_state: {
         state: "Held",
@@ -157,7 +157,14 @@ export interface Fixture {
 }
 
 /** Build a deterministic 5-entry batch, signed tree head, merchant receipt and bundle. */
-export async function buildFixture(): Promise<Fixture> {
+export interface FixtureOptions {
+  /** Escrow id embedded in the payment proof and the bundle (defaults to a fixed placeholder). */
+  escrowId?: Hex;
+}
+
+export async function buildFixture(o: FixtureOptions = {}): Promise<Fixture> {
+  const escrowId = o.escrowId ?? ESCROW_ID;
+  const specs = makeSpecs(escrowId);
   const entries: LogEntry[] = [];
   const committed = specs.map((s, i) => buildFieldCommitments(s.fields, salt(i + 1)));
   let prev: Hex = ZERO32;
@@ -215,7 +222,7 @@ export async function buildFixture(): Promise<Fixture> {
     },
     request_id: REQUEST_ID,
     mandate_id: MANDATE_ID,
-    escrow_id: ESCROW_ID,
+    escrow_id: escrowId,
     entries: bundleEntries,
     tree_heads: [{ ...head, signature }],
     anchors: [

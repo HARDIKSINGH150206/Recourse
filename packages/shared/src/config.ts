@@ -48,6 +48,16 @@ export const ConfigSchema = z.object({
   LOG_LEVEL: z.enum(["fatal", "error", "warn", "info", "debug", "trace"]).default("info"),
   ENABLE_DEV_ROUTES: z.enum(["0", "1"]).default("0"),
 
+  /** Bearer token for the API's privileged routes (manual adjudication, human review). Unset disables them. */
+  API_ADMIN_TOKEN: z
+    .string()
+    .min(16, "API_ADMIN_TOKEN must be at least 16 characters")
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  /** How long the API waits for the owner's reason text before adjudicating without it. */
+  REASON_WAIT_SECONDS: z.coerce.number().int().min(0).max(600).default(3),
+  ADJUDICATION_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(120),
+
   OLLAMA_URL: z.string().url().default("http://localhost:11434"),
   JUDGE_COUNT: z.coerce.number().int().min(1).max(3).default(1),
   AGENT_LLM: z.enum(["0", "1"]).default("0"),

@@ -53,6 +53,7 @@ export class FakeEscrow {
   private readonly anchors = new Map<Hex, number>();
   private readonly agentRep = new Map<string, ReputationRecord>();
   private readonly merchantRep = new Map<string, ReputationRecord>();
+  private readonly disputedLog = new Map<Hex, DisputedEvent>();
   private readonly disputedCbs: Array<(e: DisputedEvent) => void> = [];
   private readonly resolvedCbs: Array<(e: ResolvedEvent) => void> = [];
   private tx = 0;
@@ -217,7 +218,9 @@ export class FakeEscrow {
       throw new EscrowRevert("NotOwner");
     if (this.clock.now() >= e.windowEnds) throw new EscrowRevert("WindowClosed");
     e.state = "Disputed";
-    this.disputedCbs.forEach((cb) => cb({ escrowId, by: caller, reasonHash }));
+    const ev = { escrowId, by: caller, reasonHash };
+    this.disputedLog.set(escrowId, ev);
+    this.disputedCbs.forEach((cb) => cb(ev));
     return this.nextTx();
   }
 
@@ -282,6 +285,7 @@ export class FakeEscrow {
       delete rest.merchants;
       return rest as MandateJson;
     },
+    disputed: (id: Hex): DisputedEvent | null => this.disputedLog.get(id) ?? null,
     spent: (id: Hex) => this.spentBy.get(id) ?? 0n,
     anchoredAt: (root: Hex) => this.anchors.get(root) ?? 0,
     agentRep: (a: string) => this.agentRep.get(lc(a)) ?? { disputes: 0, faults: 0 },
@@ -342,6 +346,9 @@ class FakeEscrowView implements EscrowApi {
   }
   async merchantReputation(a: Address) {
     return this.f.read.merchantRep(a);
+  }
+  async findDisputed(escrowId: Hex) {
+    return this.f.read.disputed(escrowId);
   }
   watchDisputed(cb: (e: DisputedEvent) => void) {
     return this.f.onDisputed(cb);
