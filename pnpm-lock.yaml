@@ -187,8 +187,8 @@ importers:
         specifier: ^1.0.7
         version: 1.0.8
       json-canonicalize:
-        specifier: ^1.0.6
-        version: 1.2.0
+        specifier: ^3.0.1
+        version: 3.0.1
       pino:
         specifier: ^9
         version: 9.14.0
@@ -1657,8 +1657,9 @@ packages:
   json-buffer@3.0.1:
     resolution: {integrity: sha512-4bV5BfR2mqfQTJm+V5tPPdf+ZpuhiIvTuAB5g8kcrXOZpTT/QwwVRWBywX1ozr6lEuPdbHxwaJlm9G6mI2sfSQ==}
 
-  json-canonicalize@1.2.0:
-    resolution: {integrity: sha512-TTdjBvqrqJKSADlEsY5rWbx8/1tOrVlTR/aSLU8N2VSInCTffP0p+byYB8Es+OmL4ZOeEftjUdvV+eJeSzJC/Q==}
+  json-canonicalize@3.0.1:
+    resolution: {integrity: sha512-xEzkTucfHhDooWOSMOvrlll9oTk6/mXZIerF2DFWA2chHZsnc2zrmAKjVOyDbSYHr0e3Djx9F89nZ3U2Bn+lSw==}
+    engines: {node: '>=8.5'}
 
   json-schema-ref-resolver@3.0.1:
     resolution: {integrity: sha512-w+HwgljXpVwZ3IidoUR1qPZxSOQ+NRQWuVe6a5pe8XbHsNZE4UAwVPUvzZagn7yBKbJtt6UJnRFYbNTRPZI45Q==}
@@ -3237,7 +3238,7 @@ snapshots:
 
   json-buffer@3.0.1: {}
 
-  json-canonicalize@1.2.0: {}
+  json-canonicalize@3.0.1: {}
 
   json-schema-ref-resolver@3.0.1:
     dependencies:
