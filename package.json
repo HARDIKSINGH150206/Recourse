@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "pnpm -r --parallel --if-present --filter \"./apps/*\" dev",
     "chain:up": "bash scripts/dev-chain.sh",
-    "chain:deploy": "cd contracts && forge script script/Deploy.s.sol --rpc-url ${RPC_URL:-http://127.0.0.1:8545} --broadcast",
+    "chain:deploy": "bash scripts/deploy.sh",
     "sync:deployment": "tsx scripts/sync-deployment.ts",
     "seed": "tsx scripts/seed.ts",
     "demo": "tsx scripts/demo.ts",
@@ -21,7 +21,8 @@
     "typecheck": "pnpm -r --if-present typecheck",
     "lint": "eslint . && prettier --check .",
     "format": "prettier --write .",
-    "vectors": "tsx scripts/gen-test-vectors.ts"
+    "vectors": "tsx scripts/gen-test-vectors.ts",
+    "env:local": "tsx scripts/local-env.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",

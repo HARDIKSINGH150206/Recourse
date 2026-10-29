@@ -171,6 +171,18 @@ importers:
         specifier: ^3.24.1
         version: 3.25.76
 
+  scripts:
+    dependencies:
+      '@recourse/chain':
+        specifier: workspace:*
+        version: link:../packages/chain
+      '@recourse/shared':
+        specifier: workspace:*
+        version: link:../packages/shared
+      viem:
+        specifier: ^2.21.54
+        version: 2.57.13(typescript@5.9.3)(zod@3.25.76)
+
 packages:
 
   '@adraffy/ens-normalize@1.11.1':

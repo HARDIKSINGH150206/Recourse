@@ -119,6 +119,7 @@ VITE_DEMO_KEY_MODE=0                # 1 uses a burner owner key (stage fallback 
 |---|---|
 | `pnpm dev` | runs gateway, api, demo-merchant, demo-agent and dashboard in parallel |
 | `pnpm chain:up` | starts anvil |
+| `pnpm env:local` | creates `.env` for the local chain with anvil dev keys (refuses to overwrite) |
 | `pnpm chain:deploy` | deploys contracts to the chain in `.env` and syncs addresses |
 | `pnpm sync:deployment` | writes `deployments/<chainId>.json` and updates `.env` |
 | `pnpm seed` | funds accounts, sets roles, approves escrow |
