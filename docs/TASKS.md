@@ -4,7 +4,22 @@ Task board per lane. We do not use GitHub issues (D-023). Rules: `GUIDE.md` sect
 Status values: `TODO`, `IN_PROGRESS`, `IN_REVIEW`, `DONE`, `BLOCKED(<ID or person>)`, `CUT`.
 Only the lane owner edits their table. To request work from another lane, add a row in their table prefixed `REQUEST(P<you>):`.
 
-Last updated: 2026-10-29 (foundation + hardening on dev)
+Last updated: 2026-10-29 (HS: foundation, hardening, lane split)
+
+## Who does what (from 2026-10-29)
+
+| Person | GitHub | Lanes | Start with |
+|---|---|---|---|
+| Hardik Singh | `HARDIKSINGH150206` | P1 Backend and Blockchain, P3 Frontend and Research | P1-08 gateway DB, P1-09 gateway proxy and log, P1-10 merchant SDK, then P1-11 API; P3 follows once the gateway serves evidence |
+| Ayush Pundhir | `ayush983215` | P2 AI (all of it) | P2-02 `packages/llm` with a stub, P2-03 rules engine R0 to R8, then P2-04 extractor and judge, P2-06 mandate compiler, P2-07 benchmark |
+
+Rules for two people:
+- Each person opens PRs into `dev` and the other reviews. Nobody merges their own PR unreviewed once the first services land.
+- Ayush needs no chain or services to start: build against `packages/shared` (schemas, `verifyBundle`, `packages/shared/test/vectors.json`) and the fake `FakeEscrow` in `packages/chain`.
+- Handoff contracts between you: the evidence bundle (`docs/03` s8) from Hardik to Ayush, and `adjudicate()` / `compileMandate()` (`docs/04` s7) from Ayush to Hardik's API. Change them only via the interface-change process in `GUIDE.md` s4.2.
+- Draft AI schemas in `packages/shared/src/schemas/{verdict,rules,facts}.ts` are Ayush's to refine (D-024).
+- Tanmay (`TANTHETA7`) is a collaborator with no assigned work for now.
+- Hardik carries two lanes, so if time runs short use the cut order in `docs/07` and push P3 polish (pitch, extra dashboard pages) last.
 
 ## M0 checkpoint (foundations, 10% of build time)
 - [ ] Interfaces and `packages/shared` frozen

@@ -1,23 +1,23 @@
-# Replace @p1 @p2 @p3 with the real GitHub handles (GUIDE.md section 2)
-/contracts/                  @p1
-/packages/chain/             @p1
-/packages/shared/            @p1
-/packages/merchant-sdk/      @p1
-/apps/gateway/               @p1
-/apps/api/                   @p1
-/packages/shared/src/schemas/verdict.ts @p2
-/packages/shared/src/schemas/rules.ts   @p2
-/packages/shared/src/schemas/facts.ts   @p2
-/packages/rules-engine/      @p2
-/packages/llm/               @p2
-/packages/adjudicator/       @p2
-/packages/mandate/           @p2
-/bench/                      @p2
-/apps/dashboard/             @p3
-/apps/demo-agent/            @p3
-/apps/demo-merchant/         @p3
-/scripts/                    @p3
-/.github/                    @p3
-/docs/                       @p1 @p2 @p3
-/GUIDE.md                    @p1 @p2 @p3
-/PRD.md                      @p1 @p2 @p3
+# P1 and P3: Hardik Singh. P2: Ayush Pundhir. (GUIDE.md section 2)
+/contracts/                  @HARDIKSINGH150206
+/packages/chain/             @HARDIKSINGH150206
+/packages/shared/            @HARDIKSINGH150206
+/packages/merchant-sdk/      @HARDIKSINGH150206
+/apps/gateway/               @HARDIKSINGH150206
+/apps/api/                   @HARDIKSINGH150206
+/packages/shared/src/schemas/verdict.ts @ayush983215
+/packages/shared/src/schemas/rules.ts   @ayush983215
+/packages/shared/src/schemas/facts.ts   @ayush983215
+/packages/rules-engine/      @ayush983215
+/packages/llm/               @ayush983215
+/packages/adjudicator/       @ayush983215
+/packages/mandate/           @ayush983215
+/bench/                      @ayush983215
+/apps/dashboard/             @HARDIKSINGH150206
+/apps/demo-agent/            @HARDIKSINGH150206
+/apps/demo-merchant/         @HARDIKSINGH150206
+/scripts/                    @HARDIKSINGH150206
+/.github/                    @HARDIKSINGH150206
+/docs/                       @HARDIKSINGH150206 @ayush983215
+/GUIDE.md                    @HARDIKSINGH150206 @ayush983215
+/PRD.md                      @HARDIKSINGH150206 @ayush983215
