@@ -35,8 +35,8 @@ Rules for two people:
 | P1-05 | RecourseEscrow: release, dispute, resolve, anchorRoot, pause | E2 to E5 | IN_REVIEW | dev | Passing. Open decision: refund does not restore `spent` (log in DECISIONS) |
 | P1-06 | Contract unit, fuzz and invariant tests | docs/09 s4, docs/10 | IN_REVIEW | dev | 31 unit, 5 fuzz, 3 invariants passing |
 | P1-07 | packages/chain with fake chain | docs/04 s5 | IN_REVIEW | dev | ABI, client, FakeEscrow done; real client verified against anvil (`pnpm --filter @recourse/chain test:live`) |
-| P1-08 | Gateway DB schema (Drizzle) and migrations | GUIDE s6 | TODO | | |
-| P1-09 | Gateway proxy, entries, batching, tree heads, anchoring | G1 to G3 | TODO | | |
+| P1-08 | Gateway DB schema (Drizzle) and migrations | GUIDE s6 | IN_REVIEW | p1/feat-gateway-store-proxy | Drizzle schema + 2 migrations (init, append-only triggers). `entries` has no `batch_index` (derived from batch ranges) so the table is truly append-only |
+| P1-09 | Gateway proxy, entries, batching, tree heads, anchoring | G1 to G3 | IN_REVIEW | p1/feat-gateway-store-proxy | Proxy, log, batching, signed heads, anchoring, evidence bundle, disclosure, decision and dev tamper routes. Smoke-tested on anvil |
 | P1-10 | Merchant SDK (402, receipts) | S1, P1 to P3 | TODO | | |
 | P1-11 | API server: mandates, disputes, dispute watcher, arbiter service | docs/04 s3 | TODO | | |
 
