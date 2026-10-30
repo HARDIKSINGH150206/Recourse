@@ -1,0 +1,33 @@
+{
+  "id": "wrong_place_subtle-01",
+  "category": "wrong_place_subtle",
+  "seed": 1029190630,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Pune"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Pune Cantonment Board\",\"temp_c\":37,\"humidity\":75,\"observed_at\":1767199943,\"summary\":\"Hazy sunshine\"}",
+    "latency_ms": 1124
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The response was wrong",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

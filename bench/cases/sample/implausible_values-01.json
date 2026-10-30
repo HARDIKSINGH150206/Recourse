@@ -1,0 +1,33 @@
+{
+  "id": "implausible_values-01",
+  "category": "implausible_values",
+  "seed": 2651911827,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Kolkata"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Kolkata\",\"temp_c\":55,\"humidity\":95,\"observed_at\":1767199531,\"summary\":\"Light frost on the ground this morning\"}",
+    "latency_ms": 442
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The response was wrong",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

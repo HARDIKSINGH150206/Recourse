@@ -1,0 +1,33 @@
+{
+  "id": "stale_timestamp-01",
+  "category": "stale_timestamp",
+  "seed": 4201295963,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Pune"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Pune\",\"temp_c\":18,\"humidity\":81,\"observed_at\":1766975073,\"summary\":\"Clear skies\"}",
+    "latency_ms": 945
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The response was wrong",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

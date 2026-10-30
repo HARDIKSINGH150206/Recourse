@@ -1,0 +1,33 @@
+{
+  "id": "http_error-01",
+  "category": "http_error",
+  "seed": 3221576384,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Hyderabad"
+  },
+  "response": {
+    "status": 500,
+    "body": "{\"error\":\"upstream returned 500\"}",
+    "latency_ms": 1119
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The response was wrong",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

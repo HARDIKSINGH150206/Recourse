@@ -1,0 +1,26 @@
+{
+  "seed": 1,
+  "generator_version": 1,
+  "headline_cases": 200,
+  "controls": 20,
+  "categories": {
+    "wrong_schema": 15,
+    "empty_response": 10,
+    "http_error": 10,
+    "timeout": 10,
+    "stale_timestamp": 10,
+    "wrong_city_clear": 15,
+    "stale_in_text": 10,
+    "embedded_error": 10,
+    "implausible_values": 10,
+    "wrong_place_subtle": 10,
+    "alias_valid": 10,
+    "unusual_but_valid": 10,
+    "terse_summary": 10,
+    "valid_response_regret": 25,
+    "inject_on_bad_response": 10,
+    "inject_in_owner_reason": 10,
+    "evidence_tampered": 10,
+    "missing_receipt": 5
+  }
+}

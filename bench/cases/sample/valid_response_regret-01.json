@@ -1,0 +1,33 @@
+{
+  "id": "valid_response_regret-01",
+  "category": "valid_response_regret",
+  "seed": 3202929697,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Bengaluru"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Bengaluru\",\"temp_c\":35,\"humidity\":85,\"observed_at\":1767199416,\"summary\":\"Humid with scattered showers\"}",
+    "latency_ms": 451
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "I changed my mind",
+  "tamper": false,
+  "truth": {
+    "label": "RELEASE",
+    "class": 4
+  }
+}

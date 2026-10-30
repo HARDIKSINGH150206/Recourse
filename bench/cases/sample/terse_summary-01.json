@@ -1,0 +1,33 @@
+{
+  "id": "terse_summary-01",
+  "category": "terse_summary",
+  "seed": 1280154365,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Kolkata"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Kolkata\",\"temp_c\":19,\"humidity\":56,\"observed_at\":1767199718,\"summary\":\"Fair\"}",
+    "latency_ms": 1113
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "I think the data is incorrect",
+  "tamper": false,
+  "truth": {
+    "label": "RELEASE",
+    "class": 4
+  }
+}
