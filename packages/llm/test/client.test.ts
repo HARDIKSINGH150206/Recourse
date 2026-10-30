@@ -23,6 +23,7 @@ describe("structuredChat", () => {
       temperature: 0,
       top_p: 1,
       num_ctx: 4096,
+      num_predict: 1024,
       jsonSchema,
     });
   });
@@ -81,12 +82,14 @@ describe("structuredChat", () => {
       temperature: 0.2,
       top_p: 0.5,
       num_ctx: 8192,
+      num_predict: 64,
       timeoutMs: 5,
     });
     expect(llm.calls[0]).toMatchObject({
       temperature: 0.2,
       top_p: 0.5,
       num_ctx: 8192,
+      num_predict: 64,
       timeoutMs: 5,
     });
   });

@@ -8,7 +8,8 @@
     "test": "vitest run",
     "gen": "tsx src/gen.ts",
     "bench": "tsx src/run.ts",
-    "report": "tsx src/report-cli.ts"
+    "report": "tsx src/report-cli.ts",
+    "spike": "tsx src/spike.ts"
   },
   "dependencies": {
     "@recourse/adjudicator": "workspace:*",
