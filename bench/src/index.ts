@@ -10,3 +10,7 @@ export {
   type BenchCase,
   type Truth,
 } from "./types.js";
+export * from "./metrics.js";
+export { instrument, loadCache, saveCache, type Instrumented } from "./cache.js";
+export { prepareInputs, runConfig, type RunOptions } from "./runner.js";
+export { assembleRun, renderReport, cell, type RunFile } from "./report.js";
