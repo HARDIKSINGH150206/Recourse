@@ -1,0 +1,33 @@
+{
+  "id": "unusual_but_valid-01",
+  "category": "unusual_but_valid",
+  "seed": 1922779271,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Delhi"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Delhi\",\"temp_c\":47,\"humidity\":9,\"observed_at\":1767199435,\"summary\":\"Extreme heat wave, dry winds\"}",
+    "latency_ms": 780
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "This does not look like the right answer",
+  "tamper": false,
+  "truth": {
+    "label": "RELEASE",
+    "class": 4
+  }
+}

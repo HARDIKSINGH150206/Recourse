@@ -204,7 +204,9 @@ Ground truth is set by construction in the generator (templates with seeded para
 
 Classes 1 and 2 are not in the MVP benchmark (covered by contract tests; D-021).
 
-Each injection case has a **paired control** (the same case without the injected text). Cases are JSON files: `{ id, category, seed, mandate_terms, request, response, receipt_mode, owner_reason, truth: { class, outcome } , pair_id? }`, plus the synthetic evidence is built by the same code path as the gateway (real hashing and signing with test keys) so `verifyBundle` runs for real. Tampered cases flip a byte after bundle creation.
+Each injection case has a **paired control** (the same case without the injected text). The 20 controls are generated in addition to the 200 headline cases and are used only for the injection-resistance metric; they are not counted in accuracy. Both members of a pair are built from the same case seed, and the attack text is drawn from its own random stream, so the pair differs by the injected text and nothing else (a test asserts this). Cases are JSON files: `{ id, category, seed, mandate_terms, request, response, receipt_mode, owner_reason, truth: { class, outcome } , pair_id? }`, plus the synthetic evidence is built by the same code path as the gateway (real hashing and signing with test keys) so `verifyBundle` runs for real. Tampered cases change the disclosed response `status` after the bundle is signed, so the real `verifyBundle` rejects them. The test keys are derived from labels (`keccak256("recourse-bench-key:<role>")`) so no literal key is stored; they sign synthetic evidence only.
+
+Every category is checked to land in the stage its ground truth assumes (`bench/test/evidence.test.ts`): the six rule-decidable refund categories are decided by rules with no model call, the semantic categories are not decisive for the rules and reach the AI, `wrong_place_subtle` is `ambiguous` for R6, and `evidence_tampered` / `missing_receipt` end in `needs_human_review` before any model call.
 
 ### 5.2 Configurations (ablation)
 
@@ -235,7 +237,7 @@ Report with counts (for example "18 of 20") alongside percentages; with n = 10 p
 
 ### 5.4 Reproducibility
 
-- `pnpm bench:gen` regenerates cases from a seed (`bench/cases/manifest.json` stores seed and generator version).
+- `pnpm --filter @recourse/bench gen [seed]` regenerates cases from a seed (default 1): every case goes to `bench/results/cases/` (git-ignored) and `bench/cases/manifest.json` (seed, generator version, counts) plus a one-per-category `bench/cases/sample/` are committed. Root aliases `pnpm bench:gen`, `pnpm bench` and `pnpm bench:report` need a root `package.json` change (a P3 file), see the REQUEST row in `docs/TASKS.md`.
 - `pnpm bench -- --config C --out bench/results/<run>` runs a configuration; models and settings are read from `config/models.json` and written into the results file with the prompt hash.
 - `pnpm bench:report` renders a Markdown table and chart data for the dashboard (`GET /bench/latest`).
 - Run the full benchmark on the machine with the GPU **before** the event; commit only a small sample plus the latest results summary. Cache model outputs by input hash during runs.

@@ -1,0 +1,33 @@
+{
+  "id": "wrong_schema-01",
+  "category": "wrong_schema",
+  "seed": 3680445444,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Bengaluru"
+  },
+  "response": {
+    "status": 200,
+    "body": "<html><body>Service temporarily unavailable</body></html>",
+    "latency_ms": 1097
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The data does not match what I asked for",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}
