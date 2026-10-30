@@ -678,6 +678,31 @@ describe("read routes", () => {
     expect((await w.app.inject({ url: "/bench/runs/nope" })).statusCode).toBe(404);
   });
 
+  it("ingests a benchmark summary with the admin token, once per run id", async () => {
+    const w = await makeWorld();
+    const run = {
+      run_id: "2026-10-30_a",
+      config: { seed: 1, created_at: 77 },
+      results: { configs: {} },
+    };
+    const post = (headers: Record<string, string>, payload: unknown = run) =>
+      w.app.inject({ method: "POST", url: "/bench/runs", headers, payload: payload as object });
+
+    expect((await post({})).statusCode).toBe(401);
+    expect((await post({ authorization: "Bearer wrong" })).statusCode).toBe(401);
+    expect((await post(admin, { ...run, run_id: "../x" })).statusCode).toBe(400);
+    expect((await post(admin, { ...run, extra: 1 })).statusCode).toBe(400);
+
+    expect((await post(admin)).statusCode).toBe(201);
+    expect((await post(admin)).statusCode).toBe(200); // same run id: nothing changes
+    expect(w.json(await w.app.inject({ url: "/bench/latest" }))).toEqual({
+      run_id: "2026-10-30_a",
+      config: { seed: 1, created_at: 77 },
+      results: { configs: {} },
+      created_at: 77,
+    });
+  });
+
   it("uses the standard error shape, CORS for the dashboard only, and rate limits", async () => {
     const w = await makeWorld({ rateLimit: 5 });
     const nf = await w.app.inject({ url: "/nope" });

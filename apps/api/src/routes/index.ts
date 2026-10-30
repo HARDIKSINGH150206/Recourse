@@ -36,6 +36,15 @@ const ReviewBody = z
   })
   .strict();
 
+/** A benchmark summary as written by `pnpm bench` (docs/08 section 5.4); stored as plain JSON. */
+const BenchRunBody = z
+  .object({
+    run_id: z.string().regex(/^[A-Za-z0-9._-]{1,100}$/),
+    config: z.record(z.unknown()),
+    results: z.record(z.unknown()),
+  })
+  .strict();
+
 const digest = (s: string) => createHash("sha256").update(s).digest();
 
 /** Privileged routes need `Authorization: Bearer <API_ADMIN_TOKEN>`; with no token configured they are off. */
@@ -174,6 +183,20 @@ export function registerRoutes(app: FastifyInstance, deps: ApiDeps): void {
     const r = deps.disputes.latestBenchRun();
     if (!r) throw new RecourseError("not_found", "no benchmark run recorded yet");
     return benchJson(r);
+  });
+  /** Admin-only ingest of a benchmark summary. Re-posting the same run id changes nothing. */
+  app.post("/bench/runs", async (req, reply) => {
+    requireAdmin(deps, req);
+    const b = BenchRunBody.parse(req.body);
+    if (deps.disputes.getBenchRun(b.run_id)) return reply.code(200).send({ run_id: b.run_id });
+    const at = (b.config as { created_at?: unknown }).created_at;
+    deps.disputes.insertBenchRun({
+      runId: b.run_id,
+      configJson: JSON.stringify(b.config),
+      resultsJson: JSON.stringify(b.results),
+      createdAt: Number.isInteger(at) ? (at as number) : deps.clock.now(),
+    });
+    return reply.code(201).send({ run_id: b.run_id });
   });
   app.get("/bench/runs/:id", async (req) => {
     const r = deps.disputes.getBenchRun((req.params as { id: string }).id);
