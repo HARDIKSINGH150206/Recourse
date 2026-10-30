@@ -9,7 +9,7 @@ import { buildServer } from "./server.js";
 import { DisputeService } from "./services/disputes.js";
 import { HttpEvidenceClient } from "./services/evidence-client.js";
 import { MandateService } from "./services/mandates.js";
-import { StubAdjudicator, UnavailableCompiler } from "./services/stubs.js";
+import { buildAi } from "./services/adjudicator.js";
 
 const { cfg, dbPath, arbiterKey, escrow, token } = loadApiConfig();
 const logger = createLogger("api", { level: cfg.LOG_LEVEL });
@@ -28,13 +28,13 @@ const client = createEscrowClient({
 });
 const chain = Object.assign(client, { rpc: client.publicClient });
 
-// TODO(P2): replace the stubs with @recourse/adjudicator and @recourse/mandate when they land.
+const ai = buildAi(cfg, logger);
 const disputeService = new DisputeService({
   disputes: disputeRepo,
   mandates: mandateRepo,
   chain,
   evidence: new HttpEvidenceClient(cfg.GATEWAY_URL),
-  adjudicator: new StubAdjudicator(),
+  adjudicator: ai.adjudicator,
   clock: systemClock,
   logger,
   reasonWaitSeconds: cfg.REASON_WAIT_SECONDS,
@@ -45,7 +45,7 @@ const app = await buildServer({
   mandates: new MandateService({
     repo: mandateRepo,
     chain,
-    compiler: new UnavailableCompiler(),
+    compiler: ai.compiler,
     clock: systemClock,
     chainId: cfg.CHAIN_ID,
     escrow,
