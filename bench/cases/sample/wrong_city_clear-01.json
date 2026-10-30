@@ -1,0 +1,33 @@
+{
+  "id": "wrong_city_clear-01",
+  "category": "wrong_city_clear",
+  "seed": 3433629298,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Delhi"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Mumbai\",\"temp_c\":26,\"humidity\":35,\"observed_at\":1767199596,\"summary\":\"Light rain\"}",
+    "latency_ms": 1039
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The data does not match what I asked for",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

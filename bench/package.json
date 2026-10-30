@@ -4,11 +4,22 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "gen": "tsx src/gen.ts",
+    "bench": "tsx src/run.ts",
+    "report": "tsx src/report-cli.ts"
   },
   "dependencies": {
-    "@recourse/shared": "workspace:*",
+    "@recourse/adjudicator": "workspace:*",
+    "@recourse/llm": "workspace:*",
     "@recourse/rules-engine": "workspace:*",
-    "@recourse/adjudicator": "workspace:*"
+    "@recourse/shared": "workspace:*",
+    "viem": "^2.21.54",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "vitest": "^2.1.8"
   }
 }

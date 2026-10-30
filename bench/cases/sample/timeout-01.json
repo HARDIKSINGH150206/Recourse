@@ -1,0 +1,33 @@
+{
+  "id": "timeout-01",
+  "category": "timeout",
+  "seed": 3414605952,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Ahmedabad"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Ahmedabad\",\"temp_c\":20,\"humidity\":84,\"observed_at\":1767199636,\"summary\":\"Light rain\"}",
+    "latency_ms": 9142
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The response was wrong",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

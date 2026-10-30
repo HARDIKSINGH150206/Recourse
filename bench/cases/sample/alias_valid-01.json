@@ -1,0 +1,33 @@
+{
+  "id": "alias_valid-01",
+  "category": "alias_valid",
+  "seed": 3932032958,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Bengaluru"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Bangalore\",\"temp_c\":37,\"humidity\":34,\"observed_at\":1767199672,\"summary\":\"Light rain\"}",
+    "latency_ms": 1371
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "The temperature looks wrong to me",
+  "tamper": false,
+  "truth": {
+    "label": "RELEASE",
+    "class": 4
+  }
+}

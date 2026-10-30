@@ -228,4 +228,38 @@ describe("anchoring", () => {
     fail = false;
     expect((await anchorPending(h.repo, flaky)).anchored).toEqual([0, 1]);
   });
+
+  it("never anchors the same batch twice when runs overlap", async () => {
+    const h = await makeHarness();
+    h.deps.log.append({
+      type: "request",
+      requestId: RID,
+      mandateId: MID,
+      agentId: null,
+      fields: {},
+    });
+    await h.deps.batcher.closeBatch();
+    const good = escrowAnchor(h.fake.as(gateway.address));
+    let inFlight = 0;
+    let maxInFlight = 0;
+    let calls = 0;
+    const slow: ChainAnchor = {
+      anchor: async (...a) => {
+        calls++;
+        inFlight++;
+        maxInFlight = Math.max(maxInFlight, inFlight);
+        await new Promise((r) => setTimeout(r, 20));
+        try {
+          return await good.anchor(...a);
+        } finally {
+          inFlight--;
+        }
+      },
+    };
+    const [a, b] = await Promise.all([anchorPending(h.repo, slow), anchorPending(h.repo, slow)]);
+    expect(calls).toBe(1);
+    expect(maxInFlight).toBe(1);
+    expect([...a.anchored, ...b.anchored]).toEqual([0]);
+    expect([a.failed, b.failed]).toEqual([[], []]);
+  });
 });

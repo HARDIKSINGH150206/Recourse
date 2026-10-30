@@ -1,0 +1,33 @@
+{
+  "id": "missing_receipt-01",
+  "category": "missing_receipt",
+  "seed": 3439616140,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Chennai"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Chennai\",\"temp_c\":26,\"humidity\":77,\"observed_at\":1767199880,\"summary\":\"Overcast\"}",
+    "latency_ms": 908
+  },
+  "receipt_mode": "missing",
+  "owner_reason": "My agent bought this by mistake",
+  "tamper": false,
+  "truth": {
+    "label": "REVIEW",
+    "class": null
+  }
+}

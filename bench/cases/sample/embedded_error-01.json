@@ -1,0 +1,33 @@
+{
+  "id": "embedded_error-01",
+  "category": "embedded_error",
+  "seed": 2104569242,
+  "control": false,
+  "pair_id": null,
+  "mandate_terms": {
+    "version": 1,
+    "category": "weather_data_api",
+    "defaults": {
+      "freshness_seconds": 3600,
+      "schema_required": true,
+      "substitutions": "not_allowed",
+      "sla_ms": 5000
+    },
+    "discretion": []
+  },
+  "request": {
+    "city": "Bengaluru"
+  },
+  "response": {
+    "status": 200,
+    "body": "{\"city\":\"Bengaluru\",\"temp_c\":26,\"humidity\":89,\"observed_at\":1767199874,\"summary\":\"ERROR: data source timed out, defaulting to zeros\"}",
+    "latency_ms": 939
+  },
+  "receipt_mode": "valid",
+  "owner_reason": "This data is unusable",
+  "tamper": false,
+  "truth": {
+    "label": "REFUND",
+    "class": 3
+  }
+}

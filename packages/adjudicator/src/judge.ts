@@ -5,9 +5,8 @@ import {
   type JudgeOutput,
   type RuleResults,
 } from "@recourse/shared";
-import type { Llm } from "@recourse/llm";
+import { jsonSchemaOf, type Llm } from "@recourse/llm";
 import type { ModelsConfig } from "./config.js";
-import { jsonSchemaOf } from "./extract.js";
 
 /** Extractor output with every free-text channel closed (see sanitizeFacts). */
 export type JudgeFacts = Omit<ExtractedFacts, "notes" | "requested_entity" | "returned_entity">;
