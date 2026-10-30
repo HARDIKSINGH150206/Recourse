@@ -59,6 +59,17 @@ export const ConfigSchema = z.object({
   ADJUDICATION_TIMEOUT_SECONDS: z.coerce.number().int().positive().default(120),
 
   OLLAMA_URL: z.string().url().default("http://localhost:11434"),
+  /** Overrides the model names in config/models.json (spike S3 pins them). */
+  MODEL_EXTRACTOR: z
+    .string()
+    .min(1)
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
+  MODEL_JUDGE_1: z
+    .string()
+    .min(1)
+    .optional()
+    .or(z.literal("").transform(() => undefined)),
   JUDGE_COUNT: z.coerce.number().int().min(1).max(3).default(1),
   AGENT_LLM: z.enum(["0", "1"]).default("0"),
   DEMO_REPLAY: z.enum(["0", "1"]).default("0"),

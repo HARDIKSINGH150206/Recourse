@@ -36,11 +36,24 @@ export interface AnchorReport {
   failed: Array<{ batchIndex: number; error: string }>;
 }
 
-/** Anchor every un-anchored batch in order. Failures are reported and retried on the next call. */
-export async function anchorPending(
-  repo: LogRepository,
-  anchor: ChainAnchor,
-): Promise<AnchorReport> {
+// One anchoring run at a time per anchor: the scheduler and /log/flush can overlap, and two
+// concurrent runs would send two transactions from the gateway key with the same nonce.
+const queues = new WeakMap<ChainAnchor, Promise<unknown>>();
+
+/**
+ * Anchor every un-anchored batch in order. Failures are reported and retried on the next call.
+ * Calls are queued, and each re-reads the pending batches once it is its turn.
+ */
+export function anchorPending(repo: LogRepository, anchor: ChainAnchor): Promise<AnchorReport> {
+  const run = (queues.get(anchor) ?? Promise.resolve()).then(() => anchorOnce(repo, anchor));
+  queues.set(
+    anchor,
+    run.catch(() => undefined),
+  );
+  return run;
+}
+
+async function anchorOnce(repo: LogRepository, anchor: ChainAnchor): Promise<AnchorReport> {
   const report: AnchorReport = { anchored: [], failed: [] };
   for (const b of repo.unanchoredBatches()) {
     try {
