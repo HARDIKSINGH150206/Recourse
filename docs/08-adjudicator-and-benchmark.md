@@ -133,7 +133,11 @@ For each claim: `cites` is non-empty and every cited `seq` exists in the evidenc
 
 ### 4.5 Quorum
 
-Single judge (Must) or three judges (Should). Majority agreement on `(class, outcome, fault)` is required; otherwise `needs_human_review` (`no_quorum`). Judges run sequentially to fit local hardware; results are cached by input hash during benchmark runs only.
+Single judge (Must) or three judges (Should), set by the length of `judges` in `config/models.json`. Judges run sequentially, in config order, to fit local hardware; results are cached by input hash during benchmark runs only.
+
+A judge counts as a **vote** only if its output is consistent (class 3 with REFUND / MERCHANT, or class 4 with RELEASE / NONE) and passes the citation check (section 4.4). A judge whose model call fails, whose output never validates, or whose claims are uncited casts no vote, but it stays in the denominator. A strict majority of **all configured judges** must agree on `(class, outcome, fault)`: 2 of 3, or 1 of 1. So one broken judge out of three cannot decide a case alone, and two judges that disagree are `no_quorum`. The verdict takes its claims and explanation from the first agreeing judge in config order (this keeps `claims_hash` deterministic) and `decided_by` is `ai_quorum` when more than one judge is configured.
+
+When there is no majority, the review reason is `no_quorum` if at least one valid vote exists, else `uncited_claims` if any judge was uncited, else `model_error`. The AI can only choose two decisions, so a split among valid votes is always 2-1 (a majority) with three judges; a missing majority comes from failed or uncited judges.
 
 ### 4.6 Verdict schema (`VerdictSchema`)
 
@@ -166,7 +170,7 @@ When `needs_human_review`: `class` is `null`, `outcome` is `null`, and `review_r
 - Entry point: `adjudicate(input, { llm, models?, aliasTable? })`; `createAdjudicator(opts)` returns the `Adjudicator` object `apps/api` consumes. Models and the alias table default to `config/models.json` and `config/alias-table.json` (`models.json` also carries `top_p` and `num_ctx`).
 - Order: rules abstain (R0 / R3) -> missing evidence data (`evidence_incomplete`, for example the response body blob is not available) -> rules decisive -> extractor -> judge -> consistency and citation checks -> commitment. A model or schema failure (`LlmError`) is `needs_human_review` (`model_error`); any other exception propagates.
 - `prompt_hash` is `keccak256(extractor.v1.md + judge.v1.md)`; `settings_hash` is `canonicalHash({ temperature, seed, top_p, num_ctx })`. Review verdicts carry a zero commitment (nothing is resolved on-chain).
-- Quorum (three judges, section 4.5) is not implemented yet: the pipeline uses the first judge in `config/models.json` (P2-05).
+- The extractor's facts are kept on the verdict (so `injection_detected` is set) even when the judges fail.
 
 ## 5. Benchmark (`bench/`)
 

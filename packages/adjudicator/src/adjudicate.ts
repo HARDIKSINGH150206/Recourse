@@ -1,12 +1,13 @@
 import type { AdjudicationInput, Adjudicator, ExtractedFacts, Verdict } from "@recourse/shared";
 import { LlmError, type Llm } from "@recourse/llm";
 import { decide, runRules } from "@recourse/rules-engine";
-import { checkCitations, entryTypes } from "./citations.js";
+import { entryTypes } from "./citations.js";
 import { loadAliasTable, loadModelsConfig, type ModelsConfig } from "./config.js";
 import { entriesOf, prepare } from "./evidence.js";
 import { extractFacts } from "./extract.js";
-import { entryViews, judgeIsConsistent, runJudge, sanitizeFacts } from "./judge.js";
+import { entryViews, runJudge, sanitizeFacts } from "./judge.js";
 import { loadPrompts } from "./prompts.js";
+import { toVote, tally, type Vote } from "./quorum.js";
 import { decidedVerdict, reviewVerdict, type Ctx } from "./verdict.js";
 
 export interface AdjudicatorOptions {
@@ -48,45 +49,63 @@ export async function adjudicate(
 
   // No rule was decisive: the AI stage decides meaning only.
   let facts: ExtractedFacts;
-  let judged: Awaited<ReturnType<typeof runJudge>>;
-  const judgeName = cfg.judges[0]!.name;
   try {
     facts = await extractFacts(opts.llm, cfg, prompts.extractor, {
       requestedCity: prepared.requestedCity,
       bodyText: prepared.bodyText,
       reasonText: input.reason_text,
     });
-    judged = await runJudge(opts.llm, cfg, judgeName, prompts.judge, {
-      terms: input.mandate.terms,
-      rules,
-      facts: sanitizeFacts(facts),
-      entries: entryViews(input, entriesOf(input).mine),
-    });
-    ctx.models = [
-      {
-        role: "extractor",
-        name: cfg.extractor.name,
-        version: await opts.llm.modelVersion(cfg.extractor.name),
-      },
-      { role: "judge", name: judgeName, version: await opts.llm.modelVersion(judgeName) },
-    ];
   } catch (err) {
     if (err instanceof LlmError) return reviewVerdict(ctx, "model_error");
     throw err;
   }
   ctx.facts = facts;
 
-  if (!judgeIsConsistent(judged)) return reviewVerdict(ctx, "model_error");
-  const cited = checkCitations(judged.claims, entryTypes(input));
-  if (!cited.supported) return reviewVerdict(ctx, "uncited_claims");
+  // Judges run one after another to fit local hardware (docs/08 section 4.5).
+  const judgeInput = {
+    terms: input.mandate.terms,
+    rules,
+    facts: sanitizeFacts(facts),
+    entries: entryViews(input, entriesOf(input).mine),
+  };
+  const types = entryTypes(input);
+  const votes: Vote[] = [];
+  try {
+    ctx.models = [
+      {
+        role: "extractor",
+        name: cfg.extractor.name,
+        version: await opts.llm.modelVersion(cfg.extractor.name),
+      },
+    ];
+    for (const j of cfg.judges) {
+      ctx.models.push({
+        role: "judge",
+        name: j.name,
+        version: await opts.llm.modelVersion(j.name),
+      });
+      try {
+        votes.push(toVote(await runJudge(opts.llm, cfg, j.name, prompts.judge, judgeInput), types));
+      } catch (err) {
+        if (!(err instanceof LlmError)) throw err;
+        votes.push({ kind: "error" });
+      }
+    }
+  } catch (err) {
+    if (err instanceof LlmError) return reviewVerdict(ctx, "model_error");
+    throw err;
+  }
 
+  const result = tally(votes);
+  if (!result.ok) return reviewVerdict(ctx, result.reason);
+  const { judge, claims } = result.winner;
   return decidedVerdict(ctx, {
-    class: judged.class,
-    outcome: judged.outcome,
-    fault: judged.fault,
-    decided_by: "ai",
-    claims: cited.kept,
-    explanation: judged.explanation.slice(0, 1000),
+    class: judge.class,
+    outcome: judge.outcome,
+    fault: judge.fault,
+    decided_by: cfg.judges.length > 1 ? "ai_quorum" : "ai",
+    claims,
+    explanation: judge.explanation.slice(0, 1000),
   });
 }
 
