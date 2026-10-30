@@ -231,3 +231,30 @@ main {
     scroll-behavior: auto !important;
   }
 }
+.bar-row {
+  display: grid;
+  grid-template-columns: 2.5rem 1fr auto;
+  gap: 0.75rem;
+  align-items: center;
+  margin: 0.25rem 0;
+}
+.bar-track {
+  background: transparent;
+  border: 1px solid var(--line);
+  height: 1rem;
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bar-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+@media (max-width: 40rem) {
+  .bar-row {
+    grid-template-columns: 2rem 1fr;
+  }
+  .bar-value {
+    grid-column: 1 / -1;
+  }
+}
