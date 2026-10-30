@@ -1,17 +1,10 @@
-import { zodToJsonSchema } from "zod-to-json-schema";
 import { ExtractedFactsSchema, type ExtractedFacts } from "@recourse/shared";
-import type { Llm } from "@recourse/llm";
+import { jsonSchemaOf, type Llm } from "@recourse/llm";
 import type { ModelsConfig } from "./config.js";
 
 /** Bounds keep the untrusted text inside the model context (docs/09 section 6). */
 const MAX_BODY_CHARS = 3000;
 const MAX_REASON_CHARS = 1000;
-
-export const jsonSchemaOf = (schema: Parameters<typeof zodToJsonSchema>[0]): object => {
-  const out = { ...zodToJsonSchema(schema, { $refStrategy: "none" }) } as Record<string, unknown>;
-  delete out.$schema;
-  return out;
-};
 
 export interface Untrusted {
   requestedCity: string | undefined;
