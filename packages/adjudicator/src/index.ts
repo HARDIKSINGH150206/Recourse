@@ -8,3 +8,4 @@ export {
 export { PROMPT_FILES, loadPrompts } from "./prompts.js";
 export { sanitizeFacts, type JudgeFacts } from "./judge.js";
 export { checkCitations } from "./citations.js";
+export { tally, toVote, type Tally, type Vote } from "./quorum.js";
