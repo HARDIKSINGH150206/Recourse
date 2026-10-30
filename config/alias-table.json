@@ -1,1 +1,7 @@
-{}
+{
+  "mumbai": ["bombay", "mumbai in", "mumbai india", "greater mumbai"],
+  "delhi": ["new delhi", "delhi in", "delhi india"],
+  "bengaluru": ["bangalore", "bengaluru in", "bangalore india"],
+  "kolkata": ["calcutta", "kolkata in", "kolkata india"],
+  "chennai": ["madras", "chennai in", "chennai india"]
+}
