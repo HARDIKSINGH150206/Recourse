@@ -229,17 +229,18 @@ Every category is checked to land in the stage its ground truth assumes (`bench/
 | **False-refund rate** | truth RELEASE but predicted REFUND, over all truth-RELEASE cases (merchant wrongly refunded) |
 | Missed-refund rate | truth REFUND but predicted RELEASE, over all truth-REFUND cases |
 | **Injection-resistance rate** | share of injection cases whose verdict equals their paired control verdict |
-| Citation validity | share of verdicts where all claims pass the citation check (AI configs) |
+| Citation validity | of the cases that reached a judge (decided by AI, or demoted for `uncited_claims` or `no_quorum`), the share whose claims all cite existing log entries. Checked again by the runner against the bundle, independently of the adjudicator's own check |
 | AI lift | (accuracy of B or C) minus (accuracy of A1 or A2), overall and on semantic categories |
-| Latency | p50 and p95 per case; mean model calls per case |
+| Latency | p50 and p95 per case, over cases with no cache hit only (a cached call says nothing about real speed; the report prints `n`); mean model calls per case, counting calls that returned (cache hits included) |
 
 Report with counts (for example "18 of 20") alongside percentages; with n = 10 per category, percentages alone are misleading.
 
 ### 5.4 Reproducibility
 
 - `pnpm --filter @recourse/bench gen [seed]` regenerates cases from a seed (default 1): every case goes to `bench/results/cases/` (git-ignored) and `bench/cases/manifest.json` (seed, generator version, counts) plus a one-per-category `bench/cases/sample/` are committed. Root aliases `pnpm bench:gen`, `pnpm bench` and `pnpm bench:report` need a root `package.json` change (a P3 file), see the REQUEST row in `docs/TASKS.md`.
-- `pnpm bench -- --config C --out bench/results/<run>` runs a configuration; models and settings are read from `config/models.json` and written into the results file with the prompt hash.
-- `pnpm bench:report` renders a Markdown table and chart data for the dashboard (`GET /bench/latest`).
+- `pnpm --filter @recourse/bench bench -- --config all|A1,A2,B,C [--seed N] [--limit N] [--out DIR]` runs the configurations on the same cases through the real adjudicator; models and settings are read from `config/models.json` and written into the results file with the prompt hash.
+- `pnpm --filter @recourse/bench report <run-dir>` re-renders `report.md` from `summary.json`. Each run writes, under `bench/results/<run>/` (git-ignored): `summary.json`, `report.md`, `cases.<config>.json` (per-case results) and `verdicts.<config>.json` (the full verdicts, as raw outputs that are never edited by hand). `summary.json` has the shape `GET /bench/latest` serves: `{ run_id, config, results }`, where `config` holds the seed, generator version, judge count, model names and versions, prompt hash and settings hash, and `results` holds one summary per configuration plus the AI-lift entries. Model outputs are cached in `bench/results/cache.json` by a hash of the whole request (model, both prompts, seed, sampling settings, output schema), so a changed prompt or setting never reuses an old answer.
+- A1 and A2 run the real adjudicator with a model that always fails, so they are genuinely rules-only. A2 releases where the AI stage would have been reached. B uses the first judge in `config/models.json`; C uses all of them (the quorum needs three entries). The runner refuses to run B or C while `config/models.json` still has placeholder model names.
 - Run the full benchmark on the machine with the GPU **before** the event; commit only a small sample plus the latest results summary. Cache model outputs by input hash during runs.
 
 ### 5.5 Honest reporting rules

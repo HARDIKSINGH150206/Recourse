@@ -6,7 +6,9 @@
   "scripts": {
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
-    "gen": "tsx src/gen.ts"
+    "gen": "tsx src/gen.ts",
+    "bench": "tsx src/run.ts",
+    "report": "tsx src/report-cli.ts"
   },
   "dependencies": {
     "@recourse/adjudicator": "workspace:*",
