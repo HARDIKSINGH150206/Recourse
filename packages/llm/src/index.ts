@@ -17,6 +17,7 @@ export {
   createOllamaVersionLookup,
   type OllamaOptions,
 } from "./ollama.js";
+export { jsonSchemaOf } from "./schema.js";
 export { createStubLlm, type StubLlm, type StubReply } from "./stub.js";
 
 let defaultLlm: ReturnType<typeof createOllamaLlm> | undefined;
