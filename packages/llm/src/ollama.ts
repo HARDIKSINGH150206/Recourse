@@ -38,6 +38,7 @@ export function createOllamaTransport(opts: OllamaOptions = {}): LlmTransport {
             seed: req.seed,
             top_p: req.top_p,
             num_ctx: req.num_ctx,
+            num_predict: req.num_predict,
           },
         }),
       });

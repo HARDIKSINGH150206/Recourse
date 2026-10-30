@@ -30,6 +30,7 @@ export function instrument(inner: Llm, store: Map<string, unknown> = new Map()):
           o.temperature ?? 0,
           o.top_p ?? 1,
           o.num_ctx ?? 4096,
+          o.num_predict ?? 1024,
           o.jsonSchema,
         ]),
       );

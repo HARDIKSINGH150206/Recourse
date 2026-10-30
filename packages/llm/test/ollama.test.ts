@@ -38,7 +38,7 @@ describe("ollama transport", () => {
         { role: "system", content: "s" },
         { role: "user", content: "u" },
       ],
-      options: { temperature: 0, seed: 42, top_p: 1, num_ctx: 4096 },
+      options: { temperature: 0, seed: 42, top_p: 1, num_ctx: 4096, num_predict: 1024 },
     });
   });
 
