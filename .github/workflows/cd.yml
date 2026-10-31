@@ -1,0 +1,39 @@
+name: CD
+
+# Builds the dashboard bundle from main and keeps it as a downloadable artifact. The services
+# (gateway, api, merchant, agent) and the model server run locally for the testnet demo, so
+# there is nothing to host; docs/DEVELOPMENT.md describes how to run them.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: cd-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dashboard-bundle:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm check:secrets
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm --filter @recourse/dashboard build
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dashboard-${{ github.sha }}
+          path: apps/dashboard/dist
+          retention-days: 30
+          if-no-files-found: error

@@ -3,6 +3,6 @@
   "seed": 42,
   "top_p": 1,
   "num_ctx": 4096,
-  "extractor": { "name": "TBD-spike-S3" },
-  "judges": [{ "name": "TBD-spike-S3" }]
+  "extractor": { "name": "mistral:7b" },
+  "judges": [{ "name": "mistral:7b" }, { "name": "gemma2:9b" }, { "name": "llama3.1:8b" }]
 }
