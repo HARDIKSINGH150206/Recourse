@@ -110,6 +110,14 @@ All entries below: **29 Oct 2026**, decided by the team during ideation unless n
 - **Decision:** Feature branches merge (squash) into `dev` after review; `dev` is promoted to `main` by a human merge commit after the milestone integration check. Feature branches are cut from fresh `dev` and rebased on it often. Supersedes the "squash-merge into main" wording of D-023.
 - **Consequences:** `main` stays demo-ready; integration conflicts surface in `dev` early. CI runs on PRs into both `dev` and `main`. `GUIDE.md` section 7.
 
+### D-027: Models pinned after spike S3 (P2-01)
+- **Decision:** Local Ollama models, three families so the quorum is not one model's bias: extractor `mistral:7b`; judges `mistral:7b`, `gemma2:9b`, `llama3.1:8b`. Spike S3 (20 cases that must reach the AI, config B, the model as both extractor and judge): mistral 18/20, gemma2 17/20, llama3.1 16/20, none followed an injection, 100% first-try valid JSON. Rejected: `qwen2.5:7b` (8/20, refunds everything), and the 2 to 3B models tried earlier (qwen2.5:3b, llama3.2:3b, gemma2:2b).
+- **Consequences:** `config/models.json` holds the names; `MODEL_EXTRACTOR` and `MODEL_JUDGE_1` still override. Spike results are a screening test, not a benchmark. Benchmark run on seed 1 (200 cases plus 20 controls) is in `bench/results/` (git-ignored) and reproducible with `pnpm bench:gen && pnpm bench -- --config all`. Prompts were not tuned on the demo scenes.
+
+### D-028: Judge input narrowing and rule abstention
+- **Decision:** The judge receives sanitised extractor facts only (`sanitizeFacts` drops `notes` and entity names, keeps allow-listed value names and units), and `RuleResults` has an optional `abstain` so R0 and R3 can end in `needs_human_review`. This narrows docs/08 section 4.3 (rule 3 of CLAUDE.md: untrusted text never reaches the judge raw).
+- **Consequences:** documented in docs/08; the gateway `entries` table has no `batch_index` (derived from batch ranges) so it stays append-only.
+
 ## Open decisions (fill in as they are resolved)
 
 | # | Question | Owner | Status |

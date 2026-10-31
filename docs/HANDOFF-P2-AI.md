@@ -55,6 +55,8 @@ This was learned on a MacBook (arm64, **8 GB RAM**, about 20 GB free disk, flaky
 
 ## 4. Open work, in priority order
 
+> **Update 2026-10-31 (Hardik took over P2):** 4.1 is resolved. Models are pinned (D-027): extractor `mistral:7b`, judges `mistral:7b`, `gemma2:9b`, `llama3.1:8b`. Spike: 18/20, 17/20, 16/20, no injection followed; `qwen2.5:7b` rejected (8/20). Full benchmark on seed 1 with config C: false-refund 2/65 (3.1%, CI 0.8 to 10.5%) vs 11/65 (16.9%) for one judge (B); injection resistance 19/20 vs 18/20; overall accuracy 189/200 for B and C, with C's remaining weakness in `implausible_values` (1/10, it declines to commit and falls to review) and `alias_valid` (8/10). Synthetic cases, our own generator: say so wherever these are shown. 4.2 numbers come from `bench/results/` (git-ignored; regenerate). Sections below are kept for history.
+
 ### 4.1 P2-01: pin real models (the main blocker)
 
 Nothing real can run until `config/models.json` has real model names: the quorum is inactive, benchmark configs B and C refuse to run, the mandate compiler cannot be used, and demo scenes 3, 4, 5 and the reputation check fall to human review or the wrong class.
