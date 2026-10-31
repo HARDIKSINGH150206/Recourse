@@ -11,7 +11,7 @@ Working draft for P3-09. Sources: `docs/01` (problem, novelty, limits), `docs/05
 | 3 | Solution loop | Prevent (mandate the contract enforces), record (outside the agent), decide (rules first, AI for meaning), recover (automatic refund) | the four-step diagram from `docs/ARCHITECTURE.md` |
 | 4 | Live demo | see section 2 | the dashboard itself |
 | 5 | Why it can be trusted | rules decide what code can check; AI only reads meaning and must cite log entries; merchant text is data, not instructions | the injection scene result |
-| 6 | Measured | false-refund rate `[ ]`, injection resistance `[ ]`, AI lift over rules-only `[ ]`, with counts and sample size; cases are synthetic | `/bench` screenshot |
+| 6 | Measured | full system (3-judge quorum): merchant wrongly refunded 2 of 65 (3.1%, 95% CI 0.8 to 10.5%) against 11 of 65 (16.9%) with a single judge; injection resistance 19 of 20; accuracy 189 of 200 against 154 of 200 for the default-to-release baseline (+17.5 points, +30.5 on the semantic categories). 200 synthetic cases from our own generator (seed 1) plus 20 paired controls, so say so on the slide; one weak spot, implausible values (1 of 10), falls to human review. Source: D-027 run, regenerate with `pnpm bench -- --config all` | `/bench` screenshot |
 | 7 | Honest limits | trust window before anchoring, single arbiter key, refunds only inside the window, digital goods first (`docs/01` section 7) | the list, unedited |
 | 8 | Market and ask | who pays (teams running agent fleets), fee on protected spend (a hypothesis), validation so far `[ ]` quotes, `[ ]` calls | only what the validation log supports |
 

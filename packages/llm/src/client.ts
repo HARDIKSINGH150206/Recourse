@@ -1,7 +1,19 @@
 import type { ZodType } from "zod";
 
 /** Pinned generation settings (docs/08 section 4.1). Defaults are deterministic. */
-export const DEFAULT_SETTINGS = { temperature: 0, top_p: 1, num_ctx: 4096, timeoutMs: 120_000 };
+/**
+ * `num_predict` caps generated tokens. Every reply here is a small JSON object, and without a cap a
+ * small model under constrained decoding can keep emitting tokens and never close it (seen in spike
+ * S3: one call ran 15 minutes). A capped reply is truncated JSON, which fails validation like any
+ * other bad output.
+ */
+export const DEFAULT_SETTINGS = {
+  temperature: 0,
+  top_p: 1,
+  num_ctx: 4096,
+  num_predict: 1024,
+  timeoutMs: 120_000,
+};
 
 export interface StructuredChatOptions<T> {
   model: string;
@@ -15,6 +27,7 @@ export interface StructuredChatOptions<T> {
   temperature?: number;
   top_p?: number;
   num_ctx?: number;
+  num_predict?: number;
   timeoutMs?: number;
 }
 
@@ -28,6 +41,7 @@ export interface LlmRequest {
   temperature: number;
   top_p: number;
   num_ctx: number;
+  num_predict: number;
   timeoutMs: number;
 }
 
@@ -98,6 +112,7 @@ export function createLlm(
         temperature: opts.temperature ?? DEFAULT_SETTINGS.temperature,
         top_p: opts.top_p ?? DEFAULT_SETTINGS.top_p,
         num_ctx: opts.num_ctx ?? DEFAULT_SETTINGS.num_ctx,
+        num_predict: opts.num_predict ?? DEFAULT_SETTINGS.num_predict,
         timeoutMs: opts.timeoutMs ?? DEFAULT_SETTINGS.timeoutMs,
       };
       const first = parseOutput(await transport(base), opts.schema);
