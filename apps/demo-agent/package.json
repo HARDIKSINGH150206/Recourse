@@ -17,7 +17,7 @@
     "@recourse/shared": "workspace:*",
     "fastify": "^5",
     "pino": "^9",
-    "viem": "^2.21.54",
+    "viem": "^2.57.14",
     "zod": "^3.24.1",
     "@recourse/merchant-sdk": "workspace:*"
   },
