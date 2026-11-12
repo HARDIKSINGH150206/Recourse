@@ -13,8 +13,8 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@fastify/cors": "^11.3.1",
-    "@fastify/rate-limit": "^11.2.1",
+    "@fastify/cors": "^11.4.1",
+    "@fastify/rate-limit": "^11.2.2",
     "@recourse/adjudicator": "workspace:*",
     "@recourse/chain": "workspace:*",
     "@recourse/llm": "workspace:*",
@@ -25,7 +25,7 @@
     "drizzle-orm": "^0.45.4",
     "fastify": "^5",
     "pino": "^9",
-    "viem": "^2.21.54",
+    "viem": "^2.57.17",
     "zod": "^3.24.1"
   },
   "devDependencies": {
