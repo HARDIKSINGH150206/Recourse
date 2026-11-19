@@ -13,19 +13,19 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@fastify/cors": "^11.3.1",
-    "@fastify/rate-limit": "^11.2.1",
+    "@fastify/cors": "^11.4.3",
+    "@fastify/rate-limit": "^11.2.2",
     "@recourse/adjudicator": "workspace:*",
     "@recourse/chain": "workspace:*",
     "@recourse/llm": "workspace:*",
     "@recourse/mandate": "workspace:*",
     "@recourse/rules-engine": "workspace:*",
     "@recourse/shared": "workspace:*",
-    "better-sqlite3": "^13.0.3",
+    "better-sqlite3": "^13.2.0",
     "drizzle-orm": "^0.45.4",
     "fastify": "^5",
     "pino": "^9",
-    "viem": "^2.21.54",
+    "viem": "^2.57.20",
     "zod": "^3.24.1"
   },
   "devDependencies": {
